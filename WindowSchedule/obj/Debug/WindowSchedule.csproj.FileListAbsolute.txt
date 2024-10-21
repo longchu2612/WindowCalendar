@@ -1,0 +1,10 @@
+C:\Users\user\source\repos\WindowCalender\WindowSchedule\bin\Debug\WindowSchedule.exe.config
+C:\Users\user\source\repos\WindowCalender\WindowSchedule\bin\Debug\WindowSchedule.exe
+C:\Users\user\source\repos\WindowCalender\WindowSchedule\bin\Debug\WindowSchedule.pdb
+C:\Users\user\source\repos\WindowCalender\WindowSchedule\obj\Debug\WindowSchedule.csproj.AssemblyReference.cache
+C:\Users\user\source\repos\WindowCalender\WindowSchedule\obj\Debug\WindowSchedule.Form1.resources
+C:\Users\user\source\repos\WindowCalender\WindowSchedule\obj\Debug\WindowSchedule.Properties.Resources.resources
+C:\Users\user\source\repos\WindowCalender\WindowSchedule\obj\Debug\WindowSchedule.csproj.GenerateResource.cache
+C:\Users\user\source\repos\WindowCalender\WindowSchedule\obj\Debug\WindowSchedule.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\WindowCalender\WindowSchedule\obj\Debug\WindowSchedule.exe
+C:\Users\user\source\repos\WindowCalender\WindowSchedule\obj\Debug\WindowSchedule.pdb
