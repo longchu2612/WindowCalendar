@@ -14,6 +14,9 @@ using System.Net.Http;
 using System.Net;
 using System.Runtime.Serialization.Json;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
+
 
 
 namespace WindowCalender
@@ -43,9 +46,28 @@ namespace WindowCalender
         private List<String> dateOfWeek = new List<string>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
         private AppointmentService _appointmentService;
+
+        
         #endregion
 
-        public Form1(AppointmentService appointmentService)
+        // 
+        //public Form1(AppointmentService appointmentService)
+        //{
+        //    InitializeComponent();
+
+        //    notify = new NotifyIcon();
+        //    loadMatrix();
+
+        //    lstAppointment.View = View.Details;
+
+        //    lstAppointment.Columns.Add("Nội dung", 180);
+        //    lstAppointment.Columns.Add("From Time", 100);
+        //    lstAppointment.Columns.Add("To Time", 100);
+
+
+        //    _appointmentService = appointmentService;
+        //}
+        public Form1()
         {
             InitializeComponent();
 
@@ -58,9 +80,8 @@ namespace WindowCalender
             lstAppointment.Columns.Add("From Time", 100);
             lstAppointment.Columns.Add("To Time", 100);
 
-            
-            _appointmentService = appointmentService;
         }
+
 
         public void loadMatrix()
         {
@@ -137,79 +158,196 @@ namespace WindowCalender
             DateTime dateTime = new DateTime(year,month,Convert.ToInt32(buttonClicked.Text));
             Console.WriteLine(dateTime);
 
-            List<Appointment> appointments = await GetAppointmentsWithHavingReason(dateTime);
+            //List<Appointment> appointments = await GetAppointmentsWithHavingReason(dateTime);
+
+            //163
+
+            AppointmentResult result = await GetAppointmentsWithHavingReason(dateTime);
 
             //List<Appointment> appointments = getAllAppointments();
 
-            if (appointments == null || appointments.Count == 0)
+            if(result.Appointments == null && result.IsTokenValid == false)
             {
-                txtNotification.Text = "Hôm này bạn không có lịch hẹn nào!";
-                txtNotification.Visible = true;
-                lstAppointment.Visible = false;
+                MessageBox.Show("Unthorization");
+                this.Close();
+                var cacheconnection = RedisConnection.connection.GetDatabase();
+                await cacheconnection.KeyDeleteAsync("accessToken");
+                await cacheconnection.KeyDeleteAsync("refreshToken");
+
+                LoginForm login = new LoginForm();
+                login.Show();
+                return;
             }
-            else
-            {
-                int count = appointments.Count;
-                txtNotification.Text = $"Hôm nay bạn có {count} lịch hẹn!";
-                txtNotification.Visible = true;
-
-                lstAppointment.Visible = true;
-
-                lstAppointment.Items.Clear();
-
-                Console.WriteLine(appointments);
-
-                foreach (var appointment in appointments)
+            
+                if (result.Appointments == null || result.Appointments.Count == 0)
                 {
-                    //ListViewItem item = new ListViewItem(appointment.Reason);
-                    Console.WriteLine(appointment.reason);
-                    ListViewItem item = new ListViewItem(appointment.reason);
-                    string fromCoordinates = (appointment.fromX.HasValue ? appointment.fromX.Value.ToString() : "00") +
-                         ":" +
-                         (appointment.fromY.HasValue ? appointment.fromY.Value.ToString() : "00");
-                    item.SubItems.Add(fromCoordinates);
-                    string toCoordinates = (appointment.toX.HasValue ? appointment.toX.Value.ToString() : "00") +
-                       ":" +
-                       (appointment.toY.HasValue ? appointment.toY.Value.ToString() : "00");
-                    item.SubItems.Add(toCoordinates);
-                    //Console.WriteLine(item);
-                    lstAppointment.Items.Add(item);
+                    txtNotification.Text = "Hôm này bạn không có lịch hẹn nào!";
+                    txtNotification.Visible = true;
+                    lstAppointment.Visible = false;
                 }
-                
-               
+                else
+                {
+                    int count = result.Appointments.Count;
+                    txtNotification.Text = $"Hôm nay bạn có {count} lịch hẹn!";
+                    txtNotification.Visible = true;
 
-            }
+                    lstAppointment.Visible = true;
+
+                    lstAppointment.Items.Clear();
+
+                    Console.WriteLine(result.Appointments);
+
+                    foreach (var appointment in result.Appointments)
+                    {
+                        //ListViewItem item = new ListViewItem(appointment.Reason);
+                        Console.WriteLine(appointment.reason);
+                        ListViewItem item = new ListViewItem(appointment.reason);
+                        string fromCoordinates = (appointment.fromX.HasValue ? appointment.fromX.Value.ToString() : "00") +
+                             ":" +
+                             (appointment.fromY.HasValue ? appointment.fromY.Value.ToString() : "00");
+                        item.SubItems.Add(fromCoordinates);
+                        string toCoordinates = (appointment.toX.HasValue ? appointment.toX.Value.ToString() : "00") +
+                           ":" +
+                           (appointment.toY.HasValue ? appointment.toY.Value.ToString() : "00");
+                        item.SubItems.Add(toCoordinates);
+                        //Console.WriteLine(item);
+                        lstAppointment.Items.Add(item);
+                    }
+
+                }
+            
 
         }
 
-        public async Task<List<Appointment>> GetAppointmentsWithHavingReason(DateTime dt)
+        public async Task<AppointmentResult> GetAppointmentsWithHavingReason(DateTime dt)
         {
             HttpClient httpClient = new HttpClient();
-            string dateStr = dt.ToString("yyyy-MM-dd");
-            string link = $"http://localhost:5112/api/Schedules/getAllDate/{dateStr}";
+
+            // get accessToken and refresh Token
+            var cacheconnection = RedisConnection.connection.GetDatabase();
+            var accessToken = cacheconnection.StringGet("accessToken");
+            var refreshToken = cacheconnection.StringGet("refreshToken");
+            
+            //
+
+            TokenModel tokenModel = new TokenModel
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
+            };
+
+            var validateToken = await checkToken(tokenModel);
+            if(validateToken != null)
+            {
+                if(validateToken.Success == true)
+                {
+                    // set value for accessToken and refresh Token
+                    cacheconnection.StringSet("accessToken", validateToken.accessToken);
+                    //cacheconnection.StringSet("refreshToken", validateToken.refreshToken);
+
+                }
+
+
+                string dateStr = dt.ToString("yyyy-MM-dd");
+                string userId = getUserIdFromAccessToken(accessToken);  
+                string link = $"http://localhost:5112/api/Schedules/getAllDateByUserId?dateTime={dateStr}&userId={userId}";
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cacheconnection.StringGet("accessToken"));
+                try
+                {
+                    HttpResponseMessage response = await httpClient.GetAsync(link);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string responseData = await response.Content.ReadAsStringAsync();
+
+                        Console.WriteLine(responseData);
+
+                        List<Appointment> schedules = JsonConvert.DeserializeObject<List<Appointment>>(responseData);
+
+                        return new AppointmentResult
+                        {
+                            Appointments = schedules,
+                            IsTokenValid = true
+                        };
+
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        MessageBox.Show($"Lỗi: {response.StatusCode}");
+                        MessageBox.Show($"Lỗi: {response.StatusCode}\nNội dung lỗi: {errorContent}");
+
+                        return new AppointmentResult
+                        {
+                            Appointments = null,
+                            IsTokenValid = true
+                        };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}");
+                    return new AppointmentResult
+                    {
+                        Appointments = null,
+                        IsTokenValid = true
+                    };
+                }
+            }
+            else
+            {
+                return new AppointmentResult
+                {
+                    Appointments = null,
+                    IsTokenValid = false
+                };
+
+            }
+        }
+
+        public string getUserIdFromAccessToken(string accessToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            if (!tokenHandler.CanReadToken(accessToken))
+            {
+                Console.WriteLine("Token không hợp lệ.");
+                return null;
+            }
+
+            var jwtToken = tokenHandler.ReadJwtToken(accessToken);
+
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "Id");
+
+
+            return userIdClaim?.Value;
+        }
+
+        public async Task<ApiResponse> checkToken(TokenModel tokenModel)
+        {
+            HttpClient httpClient = new HttpClient();
+            string link = "http://localhost:5112/api/User/RenewToken";
+            string jsonContent = JsonConvert.SerializeObject(tokenModel);
+            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
             try
             {
-                HttpResponseMessage response = await httpClient.GetAsync(link);
-                if (response.IsSuccessStatusCode)
+                HttpResponseMessage response = await httpClient.PostAsync(link, content);
+                string errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(errorContent);
+
+                if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.Conflict)
                 {
                     string responseData = await response.Content.ReadAsStringAsync();
-
-                    Console.WriteLine(responseData);
-
-                    List<Appointment> schedules = JsonConvert.DeserializeObject<List<Appointment>>(responseData);
-
-                    return schedules;
+                    ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseData);
+                    return apiResponse;
 
                 }
                 else
                 {
-                    MessageBox.Show($"Lỗi: {response.StatusCode}");
                     return null;
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}");
+            catch (Exception ex) {
                 return null;
             }
         }
@@ -306,6 +444,7 @@ namespace WindowCalender
         private void Form1_Load(object sender, EventArgs e)
         {
             
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -379,8 +518,15 @@ namespace WindowCalender
 
         }
 
-        public List<Appointment> GetAppointments(DateTime dt)
+        public List<Appointment> GetAppointments(DateTime dt,int userId)
         {
+
+            var redisHelper = new RedisHelper("localhost:6379");
+            string accessToken = redisHelper.GetToken("AccessToken");
+            string refreshToken = redisHelper.GetToken("RefreshToken");
+
+
+
             string dateStr = dt.ToString("yyyy-MM-dd");
             Console.WriteLine(dateStr);
             Console.WriteLine(dt.Date);

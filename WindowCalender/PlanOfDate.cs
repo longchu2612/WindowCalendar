@@ -14,6 +14,8 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using System.Security.Policy;
 using System.ComponentModel.DataAnnotations;
+using System.Net.Http.Headers;
+using System.CodeDom;
 
 namespace WindowCalender
 {
@@ -48,11 +50,39 @@ namespace WindowCalender
             //displayJobsOfDay(dateTime);
         }
 
-        public async Task<List<Appointment>> GetAppointments(DateTime dt)
+        public async Task<AppointmentResult> GetAppointments(DateTime dt,string userId)
         {
+            var cacheconnection = RedisConnection.connection.GetDatabase();
+            var accessToken = cacheconnection.StringGet("accessToken");
+            var refreshToken = cacheconnection.StringGet("refreshToken");
+
+            TokenModel tokenModel = new TokenModel
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
+            };
+
+            var validateToken = await TokenHelper.checkToken(tokenModel);
+            if(validateToken == null)
+            {
+                return new AppointmentResult
+                {
+                    Appointments = null,
+                    IsTokenValid = false
+                };
+
+            }
+
+            if(validateToken.Success == true)
+            {
+                cacheconnection.StringSet("accessToken", validateToken.accessToken);
+                
+            }
+
             HttpClient httpClient = new HttpClient();
             string dateStr = dt.ToString("yyyy-MM-dd");
-            string link = $"http://localhost:5112/api/Schedules/dateTime/{dateStr}";
+            string link = $"http://localhost:5112/api/Schedules/getAllDateByUserIdWithoutReason?dateTime={dateStr}&userId={userId}";
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cacheconnection.StringGet("accessToken"));
             try
             {
                 HttpResponseMessage response = await httpClient.GetAsync(link);
@@ -64,32 +94,66 @@ namespace WindowCalender
 
                     List<Appointment> schedules = JsonConvert.DeserializeObject<List<Appointment>>(responseData);
 
-                    return schedules;
+                    return new AppointmentResult
+                    {
+                        Appointments = schedules,
+                        IsTokenValid = true
+                    };
 
                 }
                 else
                 {
+                    string errorContent = await response.Content.ReadAsStringAsync();
                     MessageBox.Show($"Lỗi: {response.StatusCode}");
-                    return null;
+                    MessageBox.Show($"Lỗi: {response.StatusCode}\nNội dung lỗi: {errorContent}");
+
+                    return new AppointmentResult
+                    {
+                        Appointments = null,
+                        IsTokenValid = true
+                    };
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}");
-                return null;
+                return new AppointmentResult
+                {
+                    Appointments = null,
+                    IsTokenValid = true
+                };
             }
         }
 
         public async Task displayJobsOfDay(DateTime dateTime)
         {
 
+
+
             fPanel.Size = new Size(790, 320);
             pnlJob.Controls.Add(fPanel);
 
-            List<Appointment> appointments = await GetAppointments(dateTime);
+
+            var cacheconnection = RedisConnection.connection.GetDatabase();
+            var accessToken = cacheconnection.StringGet("accessToken");
+            Console.WriteLine(accessToken);
+            string userId = TokenHelper.getUserIdFromAccessToken(accessToken);
+
+            AppointmentResult result = await GetAppointments(dateTime,userId);
             fPanel.Controls.Clear();
-           
-            if (appointments.Count == 0)
+
+            if (result.Appointments == null && result.IsTokenValid == false)
+            {
+                MessageBox.Show("Unthorization");
+                this.Close();
+                await cacheconnection.KeyDeleteAsync("accessToken");
+                await cacheconnection.KeyDeleteAsync("refreshToken");
+                LoginForm login = new LoginForm();
+                login.Show();
+                return;
+            }
+
+            if (result.Appointments.Count == 0)
             {
                 lblMessageBox.Text = "Hôm nay bạn không có lịch nào !";
                 lblMessageBox.Visible = true;
@@ -103,14 +167,14 @@ namespace WindowCalender
             }
 
 
-            if (appointments != null)
+            if (result.Appointments != null)
             {
 
-                for (int i = 0; i < appointments.Count; i++)
+                for (int i = 0; i < result.Appointments.Count; i++)
                 {
-                    Console.WriteLine(appointments[i]);
-                    ADayJob dayJob = new ADayJob(appointments[i]);
-                    Console.WriteLine(appointments[i]);
+                    //Console.WriteLine(appointments[i]);
+                    ADayJob dayJob = new ADayJob(result.Appointments[i]);
+                    //Console.WriteLine(result.Appointments[i]);
                     dayJob.Edited += DayJob_Edited;
                     dayJob.Deleted += DayJob_Deleted;
                     fPanel.Controls.Add(dayJob);
@@ -128,14 +192,21 @@ namespace WindowCalender
 
         private async void DayJob_Deleted(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn xóa không?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             ADayJob uc = sender as ADayJob;
             Appointment appointment = uc.Appointment;
+            var delete_result = await deleteAppointment(appointment.id);
+            if (delete_result.Success == false && delete_result.TokenInvalid == true)
+            {
+                LogoutAndRedirectToLogin();
+                return;
+            }
+            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn xóa không?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            
             if (result == DialogResult.Yes)
             {
                 Console.WriteLine(appointment);
-                Boolean check = await deleteAppointment(appointment.id);
-                if(check == true)
+                
+                if(delete_result.Success == true)
                 {
                     fPanel.Controls.Remove(uc);
                     appointments.Remove(appointment);
@@ -152,8 +223,34 @@ namespace WindowCalender
             
         }
 
-        public async Task<bool> deleteAppointment(int id)
+        public async Task<DeleteAppointmentResult> deleteAppointment(int id)
         {
+
+            var cacheconnection = RedisConnection.connection.GetDatabase();
+            var accessToken = cacheconnection.StringGet("accessToken");
+            var refreshToken = cacheconnection.StringGet("refreshToken");
+
+            TokenModel tokenModel = new TokenModel
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
+            };
+
+            var validateToken = await TokenHelper.checkToken(tokenModel);
+            if (validateToken == null)
+            {
+                return new DeleteAppointmentResult
+                {
+                    Success = false,
+                    TokenInvalid = true,
+                    ErrorMessage = "Token has expire and invalid"
+                };
+            }
+            if (validateToken.Success == true)
+            {
+                cacheconnection.StringSet("accessToken", validateToken.accessToken);
+            }
+
             HttpClient httpClient = new HttpClient();
             string link = $"http://localhost:5112/api/Schedules/{id}";
             try
@@ -161,17 +258,28 @@ namespace WindowCalender
                 HttpResponseMessage response = await httpClient.DeleteAsync(link);
                 if (response.IsSuccessStatusCode)
                 {
-                    return true;
+                    return new DeleteAppointmentResult
+                    {
+                        Success = true
+                    };
                 }
                 else
                 {
-                    return false;
+                    return new DeleteAppointmentResult
+                    {
+                        Success = false,
+                        TokenInvalid = false
+                    };
                 }
             }
             catch(Exception ex)
             {
                 MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}");
-                return false;
+                return new DeleteAppointmentResult
+                {
+                    Success = false,
+                    TokenInvalid = false    
+                };
             }
         }
 
@@ -224,16 +332,56 @@ namespace WindowCalender
 
 
             //updateAppointmentbyId(appointment);
-            bool result = await updateAppointmentWithId(appointment.id, appointment);
-            List<Appointment> list = await GetAppointments(appointment.Date);
-            UpdateFlowLayoutPanel(list);
+            var result = await updateAppointmentWithId(appointment.id, appointment);
+            if(result.Success == false && result.TokenInvalid == true)
+            {
+                LogoutAndRedirectToLogin();
+                return;
+            }
+
+            var cacheconnection = RedisConnection.connection.GetDatabase();
+            string userid = TokenHelper.getUserIdFromAccessToken(cacheconnection.StringGet("accessToken"));
+
+            AppointmentResult result_2 = await GetAppointments(appointment.Date,userid);
+
+            if (result_2.Appointments == null && result_2.IsTokenValid == false)
+            {
+                LogoutAndRedirectToLogin();
+                return;
+            }
+            UpdateFlowLayoutPanel(result_2.Appointments);
             uc.setFieldReadOnly(true);
             uc.changeTextValueOfButtonEdit();
             uc.isEditing = false;
         }
 
-        public async Task<bool> updateAppointmentWithId(int id,Appointment appointment)
+        public async Task<UpdateAppointmentResult> updateAppointmentWithId(int id,Appointment appointment)
         {
+            var cacheconnection = RedisConnection.connection.GetDatabase();
+            var accessToken = cacheconnection.StringGet("accessToken");
+            var refreshToken = cacheconnection.StringGet("refreshToken");
+
+            TokenModel tokenModel = new TokenModel
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+            };
+
+            var validateToken = await TokenHelper.checkToken(tokenModel);
+            if(validateToken == null)
+            {
+                return new UpdateAppointmentResult
+                {
+                    Success = false,
+                    TokenInvalid = true,
+                    ErrorMessage = "Token has expire and invalid"
+                };
+            }
+            if(validateToken.Success == true)
+            {
+                cacheconnection.StringSet("accessToken", validateToken.accessToken);
+            }
+
             HttpClient httpclient = new HttpClient();
             string link = $"http://localhost:5112/api/Schedules/{id}";
             Console.WriteLine(link);
@@ -248,18 +396,30 @@ namespace WindowCalender
                 if (response.IsSuccessStatusCode)
                 {
                     MessageBox.Show("Chỉnh sửa thành công!");
-                    return true;
+                    
+                    return new UpdateAppointmentResult
+                    {
+                        Success = true
+                    };
                 }
                 else
                 {
                     MessageBox.Show("Chỉnh sửa thất bại!");
-                    return false;
+                    return new UpdateAppointmentResult
+                    {
+                        Success = false,
+                        TokenInvalid = false
+                    };
                 }
 
             }
             catch (Exception ex) {
                 Console.WriteLine($"Error occurred: {ex.Message}");
-                return false;
+                return new UpdateAppointmentResult
+                {
+                    Success = false,
+                    TokenInvalid = false
+                };
             }
 
         }
@@ -513,19 +673,94 @@ namespace WindowCalender
 
         private void dtpkDate_ValueChanged(object sender, EventArgs e)
         {
+            
             displayJobsOfDay((sender as DateTimePicker).Value);
         }
 
-        public async Task addNewAppointment(DateTime dateTime)
+        public async Task<ApiResponse> checkToken(TokenModel tokenModel)
         {
             HttpClient httpClient = new HttpClient();
+            string link = "http://localhost:5112/api/User/RenewToken";
+            string jsonContent = JsonConvert.SerializeObject(tokenModel);
+            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+            try
+            {
+                HttpResponseMessage response = await httpClient.PostAsync(link, content);
+                string errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(errorContent);
+
+                if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.Conflict)
+                {
+                    string responseData = await response.Content.ReadAsStringAsync();
+                    ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseData);
+                    return apiResponse;
+
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<AddApointmentResult> addNewAppointment(DateTime dateTime)
+        {
+            //checkToken
+            var cacheconnection = RedisConnection.connection.GetDatabase();
+            var accessToken = cacheconnection.StringGet("accessToken");
+            var refreshToken = cacheconnection.StringGet("refreshToken");
+
+            TokenModel tokenModel = new TokenModel
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
+            };
+
+            var validateToken = await TokenHelper.checkToken(tokenModel);
+            if(validateToken == null)
+            {
+                //return new AddAppointmentResult
+                //{
+                //    Success = false,
+                //    TokenInvalid = true,
+                //    ErrorMessage = "Token không hợp lệ hoặc đã hết hạn."
+                //};
+                return new AddApointmentResult
+                {
+                    Success = false,
+                    TokenInvalid = true,
+                    ErrorMessage = "Token has expire or invalid"
+                };
+            }
+            if(validateToken.Success == true)
+            {
+                cacheconnection.StringSet("accessToken", validateToken.accessToken);
+            }
+
+            HttpClient httpClient = new HttpClient();
+            
             Appointment appointment = new Appointment() { Date = dtpkDate.Value };
             string dateStr = dateTime.ToString("yyyy-MM-dd");
-            string link = $"http://localhost:5112/api/Schedules/{dateStr}";
+            string userId = TokenHelper.getUserIdFromAccessToken(cacheconnection.StringGet("accessToken"));
+
+            var jsonData = new {
+                dateTime = dateStr,
+                user_id = userId
+            };
+
+            string jsonString = JsonConvert.SerializeObject(jsonData);
+            
+            string link = $"http://localhost:5112/api/Schedules/insertByDate";
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cacheconnection.StringGet("accessToken"));
             //appointments.Add(appointment);
             try
             {
-                HttpContent content = new StringContent(String.Empty);
+                HttpContent content = new StringContent(jsonString, System.Text.Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await httpClient.PostAsync(link, content);
                 if (response.IsSuccessStatusCode)
                 {
@@ -536,18 +771,33 @@ namespace WindowCalender
                     aDayJob.Edited += DayJob_Edited;
                     aDayJob.Deleted += DayJob_Deleted;
                     fPanel.Controls.Add(aDayJob);
+                    return new AddApointmentResult
+                    {
+                        Success = true
+                    };
                 }
                 else
                 {
-                    MessageBox.Show($"Error: {response.StatusCode}");
-
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show($"Error: {response.StatusCode}\nContent: {errorContent}");
+                    return new AddApointmentResult
+                    {
+                        Success = false,
+                        TokenInvalid = false,
+                        ErrorMessage = errorContent
+                    };
                 }
 
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error: {ex.Message}");
-
+                return new AddApointmentResult
+                {
+                    Success = false,
+                    TokenInvalid = false,
+                    ErrorMessage = ex.Message
+                };
             }
 
         }
@@ -579,16 +829,75 @@ namespace WindowCalender
             this.dtpkDate.Value = DateTime.Now;
         }
 
+        // 
         public async void mnsThemViec_Click(object sender, EventArgs e)
         {
-            List<Appointment> list = await GetAppointments(dtpkDate.Value);
-            if (list.Count == 0)
+            var cacheconnection = RedisConnection.connection.GetDatabase();
+            var accessToken = cacheconnection.StringGet("accessToken");
+            var refreshToken = cacheconnection.StringGet("refreshToken");
+
+            //TokenModel tokenModel = new TokenModel
+            //{
+            //    AccessToken = accessToken,
+            //    RefreshToken = refreshToken
+            //};
+
+            //var validateToken = await TokenHelper.checkToken(tokenModel);
+            //if (validateToken == null)
+            //{
+            //    MessageBox.Show("Unthorization");
+            //    this.Close();
+            //    await cacheconnection.KeyDeleteAsync("accessToken");
+            //    await cacheconnection.KeyDeleteAsync("refreshToken");
+
+            //    LoginForm login = new LoginForm();
+            //    login.Show();
+            //    return;
+
+            //}
+            //if (validateToken.Success == true)
+            //{
+
+            //    cacheconnection.StringSet("accessToken", validateToken.accessToken);
+
+            //}
+            string userId = TokenHelper.getUserIdFromAccessToken(accessToken);
+            AppointmentResult result = await GetAppointments(dtpkDate.Value,userId);
+            var access = cacheconnection.StringGet("accessToken");
+            Console.WriteLine(access);
+            if (result.Appointments == null && result.IsTokenValid == false)
             {
-               AJobTitle aJobTitle = new AJobTitle();
-               fPanel.Controls.Add(aJobTitle);
-               lblMessageBox.Visible = false;
+                LogoutAndRedirectToLogin();
+                return;
             }
-            addNewAppointment(dtpkDate.Value);
+            if (result.Appointments.Count == 0)
+            {
+                AJobTitle aJobTitle = new AJobTitle();
+                fPanel.Controls.Add(aJobTitle);
+                lblMessageBox.Visible = false;
+            }
+            var addResult  = await addNewAppointment(dtpkDate.Value);
+            if(addResult.Success == false && addResult.TokenInvalid == true)
+            {
+                LogoutAndRedirectToLogin();
+                return;
+            }
+        }
+
+        public async void LogoutAndRedirectToLogin()
+        {
+            MessageBox.Show("Unauthorized");
+            foreach (Form form in Application.OpenForms)
+            {
+                form.Hide();
+            }
+            // Xóa accessToken và refreshToken khỏi cache
+            var cacheconnection = RedisConnection.connection.GetDatabase();
+            await cacheconnection.KeyDeleteAsync("accessToken");
+            await cacheconnection.KeyDeleteAsync("refreshToken");
+            LoginForm login = new LoginForm();
+            login.Show();
+            
         }
 
 

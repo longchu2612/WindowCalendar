@@ -48,9 +48,10 @@
             // 
             this.panel1.Controls.Add(this.panel3);
             this.panel1.Controls.Add(this.pnlJob);
-            this.panel1.Location = new System.Drawing.Point(12, 39);
+            this.panel1.Location = new System.Drawing.Point(9, 32);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(823, 395);
+            this.panel1.Size = new System.Drawing.Size(617, 321);
             this.panel1.TabIndex = 0;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
@@ -59,16 +60,18 @@
             this.panel3.Controls.Add(this.btnYesterday);
             this.panel3.Controls.Add(this.btnTomorrow);
             this.panel3.Controls.Add(this.dtpkDate);
-            this.panel3.Location = new System.Drawing.Point(13, 17);
+            this.panel3.Location = new System.Drawing.Point(10, 14);
+            this.panel3.Margin = new System.Windows.Forms.Padding(2);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(792, 34);
+            this.panel3.Size = new System.Drawing.Size(594, 28);
             this.panel3.TabIndex = 1;
             // 
             // btnYesterday
             // 
-            this.btnYesterday.Location = new System.Drawing.Point(159, 2);
+            this.btnYesterday.Location = new System.Drawing.Point(119, 2);
+            this.btnYesterday.Margin = new System.Windows.Forms.Padding(2);
             this.btnYesterday.Name = "btnYesterday";
-            this.btnYesterday.Size = new System.Drawing.Size(98, 25);
+            this.btnYesterday.Size = new System.Drawing.Size(74, 20);
             this.btnYesterday.TabIndex = 1;
             this.btnYesterday.Text = "Hôm qua";
             this.btnYesterday.UseVisualStyleBackColor = true;
@@ -76,9 +79,10 @@
             // 
             // btnTomorrow
             // 
-            this.btnTomorrow.Location = new System.Drawing.Point(528, 3);
+            this.btnTomorrow.Location = new System.Drawing.Point(396, 2);
+            this.btnTomorrow.Margin = new System.Windows.Forms.Padding(2);
             this.btnTomorrow.Name = "btnTomorrow";
-            this.btnTomorrow.Size = new System.Drawing.Size(106, 30);
+            this.btnTomorrow.Size = new System.Drawing.Size(80, 24);
             this.btnTomorrow.TabIndex = 2;
             this.btnTomorrow.Text = "Ngày Mai";
             this.btnTomorrow.UseVisualStyleBackColor = true;
@@ -86,18 +90,20 @@
             // 
             // dtpkDate
             // 
-            this.dtpkDate.Location = new System.Drawing.Point(273, 5);
+            this.dtpkDate.Location = new System.Drawing.Point(205, 4);
+            this.dtpkDate.Margin = new System.Windows.Forms.Padding(2);
             this.dtpkDate.Name = "dtpkDate";
-            this.dtpkDate.Size = new System.Drawing.Size(240, 22);
+            this.dtpkDate.Size = new System.Drawing.Size(181, 20);
             this.dtpkDate.TabIndex = 0;
             this.dtpkDate.ValueChanged += new System.EventHandler(this.dtpkDate_ValueChanged);
             // 
             // pnlJob
             // 
             this.pnlJob.Controls.Add(this.lblMessageBox);
-            this.pnlJob.Location = new System.Drawing.Point(13, 57);
+            this.pnlJob.Location = new System.Drawing.Point(10, 46);
+            this.pnlJob.Margin = new System.Windows.Forms.Padding(2);
             this.pnlJob.Name = "pnlJob";
-            this.pnlJob.Size = new System.Drawing.Size(792, 322);
+            this.pnlJob.Size = new System.Drawing.Size(594, 262);
             this.pnlJob.TabIndex = 0;
             this.pnlJob.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlJob_Paint);
             // 
@@ -105,9 +111,10 @@
             // 
             this.lblMessageBox.AutoSize = true;
             this.lblMessageBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMessageBox.Location = new System.Drawing.Point(287, 11);
+            this.lblMessageBox.Location = new System.Drawing.Point(215, 9);
+            this.lblMessageBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblMessageBox.Name = "lblMessageBox";
-            this.lblMessageBox.Size = new System.Drawing.Size(50, 16);
+            this.lblMessageBox.Size = new System.Drawing.Size(41, 13);
             this.lblMessageBox.TabIndex = 0;
             this.lblMessageBox.Text = "label2";
             this.lblMessageBox.Click += new System.EventHandler(this.lblMessageBox_Click);
@@ -120,7 +127,8 @@
             this.mnsThemViec});
             this.mnsMain.Location = new System.Drawing.Point(0, 0);
             this.mnsMain.Name = "mnsMain";
-            this.mnsMain.Size = new System.Drawing.Size(847, 28);
+            this.mnsMain.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
+            this.mnsMain.Size = new System.Drawing.Size(635, 24);
             this.mnsMain.TabIndex = 1;
             this.mnsMain.Text = "menuStrip1";
             this.mnsMain.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
@@ -128,25 +136,26 @@
             // mnsHomNay
             // 
             this.mnsHomNay.Name = "mnsHomNay";
-            this.mnsHomNay.Size = new System.Drawing.Size(83, 24);
+            this.mnsHomNay.Size = new System.Drawing.Size(68, 20);
             this.mnsHomNay.Text = "Hôm nay";
             this.mnsHomNay.Click += new System.EventHandler(this.mnsHomNay_Click);
             // 
             // mnsThemViec
             // 
             this.mnsThemViec.Name = "mnsThemViec";
-            this.mnsThemViec.Size = new System.Drawing.Size(90, 24);
+            this.mnsThemViec.Size = new System.Drawing.Size(73, 20);
             this.mnsThemViec.Text = "Thêm việc";
             this.mnsThemViec.Click += new System.EventHandler(this.mnsThemViec_Click);
             // 
             // PlanOfDate
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(847, 446);
+            this.ClientSize = new System.Drawing.Size(635, 362);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.mnsMain);
             this.MainMenuStrip = this.mnsMain;
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "PlanOfDate";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Lịch hôm nay";

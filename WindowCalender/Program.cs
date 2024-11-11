@@ -19,7 +19,7 @@ namespace WindowCalender
             Application.SetCompatibleTextRenderingDefault(false);
             HttpClient httpClient = new HttpClient();
             AppointmentService appointmentService = new AppointmentService(httpClient);
-            Application.Run(new Form1(appointmentService));
+            Application.Run(new LoginForm());
         }
     }
 }
