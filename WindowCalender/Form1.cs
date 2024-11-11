@@ -16,6 +16,7 @@ using System.Runtime.Serialization.Json;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using NLog.LayoutRenderers;
 
 
 
@@ -166,27 +167,26 @@ namespace WindowCalender
 
             //List<Appointment> appointments = getAllAppointments();
 
-            if(result.Appointments == null && result.IsTokenValid == false)
+            if (result.Appointments == null && result.IsTokenValid == false)
             {
                 MessageBox.Show("Unthorization");
                 this.Close();
                 var cacheconnection = RedisConnection.connection.GetDatabase();
                 await cacheconnection.KeyDeleteAsync("accessToken");
                 await cacheconnection.KeyDeleteAsync("refreshToken");
-
                 LoginForm login = new LoginForm();
                 login.Show();
                 return;
             }
-            
-                if (result.Appointments == null || result.Appointments.Count == 0)
-                {
+
+            if (result.Appointments == null || result.Appointments.Count == 0)
+            {
                     txtNotification.Text = "Hôm này bạn không có lịch hẹn nào!";
                     txtNotification.Visible = true;
                     lstAppointment.Visible = false;
-                }
-                else
-                {
+            }
+            else
+            {
                     int count = result.Appointments.Count;
                     txtNotification.Text = $"Hôm nay bạn có {count} lịch hẹn!";
                     txtNotification.Visible = true;
@@ -212,9 +212,9 @@ namespace WindowCalender
                         item.SubItems.Add(toCoordinates);
                         //Console.WriteLine(item);
                         lstAppointment.Items.Add(item);
-                    }
+            }
 
-                }
+            }
             
 
         }
@@ -236,23 +236,29 @@ namespace WindowCalender
                 RefreshToken = refreshToken
             };
 
-            var validateToken = await checkToken(tokenModel);
-            if(validateToken != null)
+            //var validateToken = await checkToken(tokenModel);
+
+            var validateToken = await TokenHelper.checkToken(tokenModel);
+
+            if (validateToken == null)
             {
-                if(validateToken.Success == true)
+                return new AppointmentResult
                 {
-                    // set value for accessToken and refresh Token
-                    cacheconnection.StringSet("accessToken", validateToken.accessToken);
-                    //cacheconnection.StringSet("refreshToken", validateToken.refreshToken);
+                    Appointments = null,
+                    IsTokenValid = false
+                };
 
-                }
+            }
 
-
-                string dateStr = dt.ToString("yyyy-MM-dd");
-                string userId = getUserIdFromAccessToken(accessToken);  
-                string link = $"http://localhost:5112/api/Schedules/getAllDateByUserId?dateTime={dateStr}&userId={userId}";
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cacheconnection.StringGet("accessToken"));
-                try
+            if (validateToken.Success == true)
+            {
+               cacheconnection.StringSet("accessToken", validateToken.accessToken);
+            }
+            string dateStr = dt.ToString("yyyy-MM-dd");
+            string userId = getUserIdFromAccessToken(accessToken);  
+            string link = $"http://localhost:5112/api/Schedules/getAllDateByUserId?dateTime={dateStr}&userId={userId}";
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cacheconnection.StringGet("accessToken"));
+            try
                 {
                     HttpResponseMessage response = await httpClient.GetAsync(link);
 
@@ -293,16 +299,8 @@ namespace WindowCalender
                         IsTokenValid = true
                     };
                 }
-            }
-            else
-            {
-                return new AppointmentResult
-                {
-                    Appointments = null,
-                    IsTokenValid = false
-                };
-
-            }
+            
+            
         }
 
         public string getUserIdFromAccessToken(string accessToken)

@@ -865,6 +865,8 @@ namespace WindowCalender
             AppointmentResult result = await GetAppointments(dtpkDate.Value,userId);
             var access = cacheconnection.StringGet("accessToken");
             Console.WriteLine(access);
+            Console.WriteLine(result);
+            
             if (result.Appointments == null && result.IsTokenValid == false)
             {
                 LogoutAndRedirectToLogin();

@@ -22,6 +22,7 @@ namespace WindowCalender
             try
             {
                 HttpResponseMessage response = await httpClient.PostAsync(link, content);
+                Console.WriteLine(response);
                 string errorContent = await response.Content.ReadAsStringAsync();
                 Console.WriteLine(errorContent);
 
