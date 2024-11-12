@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using NLog.LayoutRenderers;
+using System.Security.Cryptography;
 
 
 
@@ -81,6 +82,7 @@ namespace WindowCalender
             lstAppointment.Columns.Add("From Time", 100);
             lstAppointment.Columns.Add("To Time", 100);
 
+            
         }
 
 
@@ -202,13 +204,13 @@ namespace WindowCalender
                         //ListViewItem item = new ListViewItem(appointment.Reason);
                         Console.WriteLine(appointment.reason);
                         ListViewItem item = new ListViewItem(appointment.reason);
-                        string fromCoordinates = (appointment.fromX.HasValue ? appointment.fromX.Value.ToString() : "00") +
+                        string fromCoordinates = (appointment.fromX.HasValue ? appointment.fromX.Value.ToString("D2") : "00") +
                              ":" +
-                             (appointment.fromY.HasValue ? appointment.fromY.Value.ToString() : "00");
+                             (appointment.fromY.HasValue ? appointment.fromY.Value.ToString("D2") : "00");
                         item.SubItems.Add(fromCoordinates);
-                        string toCoordinates = (appointment.toX.HasValue ? appointment.toX.Value.ToString() : "00") +
+                        string toCoordinates = (appointment.toX.HasValue ? appointment.toX.Value.ToString("D2") : "00") +
                            ":" +
-                           (appointment.toY.HasValue ? appointment.toY.Value.ToString() : "00");
+                           (appointment.toY.HasValue ? appointment.toY.Value.ToString("D2") : "00");
                         item.SubItems.Add(toCoordinates);
                         //Console.WriteLine(item);
                         lstAppointment.Items.Add(item);
@@ -441,8 +443,8 @@ namespace WindowCalender
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            
-
+            tmNotify.Interval = 60000;
+            tmNotify.Start();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -638,11 +640,55 @@ namespace WindowCalender
 
         //}
 
-        private void tmNotify_Tick(object sender, EventArgs e)
+        private async void tmNotify_Tick(object sender, EventArgs e)
         {
-           
+            HttpClient httpClient = new HttpClient();
+            TimeSpan currentTime = DateTime.Now.TimeOfDay;
 
-             
+            AppointmentResult result = await GetAppointmentsWithHavingReason(DateTime.Now);
+
+            if (result.Appointments == null && result.IsTokenValid == false)
+            {
+                MessageBox.Show("Unthorization");
+                this.Close();
+                var cacheconnection = RedisConnection.connection.GetDatabase();
+                await cacheconnection.KeyDeleteAsync("accessToken");
+                await cacheconnection.KeyDeleteAsync("refreshToken");
+                LoginForm login = new LoginForm();
+                login.Show();
+                return;
+            }
+
+
+            if (result.Appointments == null)
+            {
+                return;
+            }
+
+            foreach(var appointment in result.Appointments)
+            {
+                DateTime appointmentStartTime = new DateTime(
+                  DateTime.Now.Year,
+                  DateTime.Now.Month,
+                  DateTime.Now.Day,
+                  appointment.fromX ?? 0,
+                  appointment.fromY ?? 0,
+                  0);
+                if (appointmentStartTime - DateTime.Now <= TimeSpan.FromMinutes(2) && appointmentStartTime > DateTime.Now)
+                {
+                    String schedule = getNotifycation(appointment);
+                    notifyIcon1.ShowBalloonTip(10000, "Thông báo lịch hẹn", schedule, ToolTipIcon.Info);
+                }
+            }
+
+
+
+        }
+
+        public String getNotifycation(Appointment appointment)
+        {
+            
+            return $"Sắp đến lịch hẹn: {appointment.reason}\nGiờ bắt đầu: {appointment.fromX:D2}: {appointment.fromY:D2}\n đến {appointment.toX:D2} : {appointment.toY:D2}";
         }
     }
 }

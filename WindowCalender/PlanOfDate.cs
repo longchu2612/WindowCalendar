@@ -832,7 +832,7 @@ namespace WindowCalender
         // 
         public async void mnsThemViec_Click(object sender, EventArgs e)
         {
-            var cacheconnection = RedisConnection.connection.GetDatabase();
+             var cacheconnection = RedisConnection.connection.GetDatabase();
             var accessToken = cacheconnection.StringGet("accessToken");
             var refreshToken = cacheconnection.StringGet("refreshToken");
 
