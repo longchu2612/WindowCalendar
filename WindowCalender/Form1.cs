@@ -642,6 +642,8 @@ namespace WindowCalender
 
         private async void tmNotify_Tick(object sender, EventArgs e)
         {
+            Console.WriteLine(sender);
+            Console.WriteLine(e);
             HttpClient httpClient = new HttpClient();
             TimeSpan currentTime = DateTime.Now.TimeOfDay;
 
