@@ -158,6 +158,9 @@ namespace WindowCalender
                 return;
             }
 
+           
+            
+
             DateTime dateTime = new DateTime(year,month,Convert.ToInt32(buttonClicked.Text));
             Console.WriteLine(dateTime);
 
@@ -226,40 +229,47 @@ namespace WindowCalender
             HttpClient httpClient = new HttpClient();
 
             // get accessToken and refresh Token
-            var cacheconnection = RedisConnection.connection.GetDatabase();
-            var accessToken = cacheconnection.StringGet("accessToken");
-            var refreshToken = cacheconnection.StringGet("refreshToken");
+
+            TokenStorage tokenStorage = TokenStorage.Instance;
+            var accessToken = tokenStorage.accesToken;
+            var refreshToken = tokenStorage.refreshToken;
+
+            //var cacheconnection = RedisConnection.connection.GetDatabase();
+            //var accessToken = cacheconnection.StringGet("accessToken");
+            //var refreshToken = cacheconnection.StringGet("refreshToken");
             
             //
 
-            TokenModel tokenModel = new TokenModel
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken
-            };
+            //TokenModel tokenModel = new TokenModel
+            //{
+            //    AccessToken = accessToken,
+            //    RefreshToken = refreshToken
+            //};
 
             //var validateToken = await checkToken(tokenModel);
 
-            var validateToken = await TokenHelper.checkToken(tokenModel);
+            //var validateToken = await TokenHelper.checkToken(tokenModel);
 
-            if (validateToken == null)
-            {
-                return new AppointmentResult
-                {
-                    Appointments = null,
-                    IsTokenValid = false
-                };
+            //if (validateToken == null)
+            //{
+            //    return new AppointmentResult
+            //    {
+            //        Appointments = null,
+            //        IsTokenValid = false
+            //    };
 
-            }
+            //}
 
-            if (validateToken.Success == true)
-            {
-               cacheconnection.StringSet("accessToken", validateToken.accessToken);
-            }
+            //if (validateToken.Success == true)
+            //{
+            //   cacheconnection.StringSet("accessToken", validateToken.accessToken);
+            //}
+
+
             string dateStr = dt.ToString("yyyy-MM-dd");
             string userId = getUserIdFromAccessToken(accessToken);  
             string link = $"http://localhost:5112/api/Schedules/getAllDateByUserId?dateTime={dateStr}&userId={userId}";
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cacheconnection.StringGet("accessToken"));
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             try
                 {
                     HttpResponseMessage response = await httpClient.GetAsync(link);

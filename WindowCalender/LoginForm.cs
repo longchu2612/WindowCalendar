@@ -45,10 +45,14 @@ namespace WindowCalender
                 //Console.WriteLine(tokenModel.AccessToken);
                 //Console.WriteLine(tokenModel.RefreshToken);
 
-                var cacheconnection = RedisConnection.connection.GetDatabase();
-                cacheconnection.StringSet("accessToken", apiResponse.accessToken);
-                cacheconnection.StringSet("refreshToken", apiResponse.refreshToken);
+                //var cacheconnection = RedisConnection.connection.GetDatabase();
+                //cacheconnection.StringSet("accessToken", apiResponse.accessToken);
+                //cacheconnection.StringSet("refreshToken", apiResponse.refreshToken);
 
+                TokenStorage tokenStorage = TokenStorage.Instance;
+
+                tokenStorage.accesToken = apiResponse.accessToken;
+                tokenStorage.refreshToken = apiResponse.refreshToken;
 
                 this.Hide();
 

@@ -3,11 +3,7 @@
   "WorkspaceRootPath": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|C:\\Users\\GHM\\source\\repos\\WindowCalendar\\windowcalender\\tokenhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|solutionrelative:windowcalender\\tokenhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|c:\\users\\ghm\\source\\repos\\windowcalendar\\windowcalender\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|C:\\Users\\GHM\\source\\repos\\WindowCalendar\\windowcalender\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|solutionrelative:windowcalender\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -15,8 +11,28 @@
       "RelativeMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|solutionrelative:windowcalender\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|C:\\Users\\GHM\\source\\repos\\WindowCalendar\\windowcalender\\tokenhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|solutionrelative:windowcalender\\tokenhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|c:\\users\\ghm\\source\\repos\\windowcalendar\\windowcalender\\tokenmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|solutionrelative:windowcalender\\tokenmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|c:\\users\\ghm\\source\\repos\\windowcalendar\\windowcalender\\tokenstorage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|solutionrelative:windowcalender\\tokenstorage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|C:\\Users\\GHM\\source\\repos\\WindowCalendar\\windowcalender\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|solutionrelative:windowcalender\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|C:\\Users\\GHM\\source\\repos\\WindowCalendar\\windowcalender\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|solutionrelative:windowcalender\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|C:\\Users\\GHM\\source\\repos\\WindowCalendar\\windowcalender\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|solutionrelative:windowcalender\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7360B699-95CD-43D5-B0E4-F981FEE51114}|WindowCalender\\WindowCalender.csproj|C:\\Users\\GHM\\source\\repos\\WindowCalendar\\windowcalender\\planofdate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -46,11 +62,63 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 12,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 3,
+              "Title": "TokenModel.cs",
+              "DocumentMoniker": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\TokenModel.cs",
+              "RelativeDocumentMoniker": "WindowCalender\\TokenModel.cs",
+              "ToolTip": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\TokenModel.cs",
+              "RelativeToolTip": "WindowCalender\\TokenModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-18T08:33:06.93Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\Program.cs",
+              "RelativeDocumentMoniker": "WindowCalender\\Program.cs",
+              "ToolTip": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\Program.cs",
+              "RelativeToolTip": "WindowCalender\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-18T04:17:00.905Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TokenStorage.cs",
+              "DocumentMoniker": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\TokenStorage.cs",
+              "RelativeDocumentMoniker": "WindowCalender\\TokenStorage.cs",
+              "ToolTip": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\TokenStorage.cs",
+              "RelativeToolTip": "WindowCalender\\TokenStorage.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAqwB8AAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-18T04:12:50.22Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "LoginForm.cs",
+              "DocumentMoniker": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\LoginForm.cs",
+              "RelativeDocumentMoniker": "WindowCalender\\LoginForm.cs",
+              "ToolTip": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\LoginForm.cs",
+              "RelativeToolTip": "WindowCalender\\LoginForm.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAAgwCoAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-18T03:23:53.617Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
               "Title": "Appointment.cs",
               "DocumentMoniker": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\Appointment.cs",
               "RelativeDocumentMoniker": "WindowCalender\\Appointment.cs",
@@ -62,7 +130,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 11,
               "Title": "RedisConnection.cs",
               "DocumentMoniker": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\RedisConnection.cs",
               "RelativeDocumentMoniker": "WindowCalender\\RedisConnection.cs",
@@ -74,7 +142,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 10,
               "Title": "Token.cs",
               "DocumentMoniker": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\Token.cs",
               "RelativeDocumentMoniker": "WindowCalender\\Token.cs",
@@ -86,7 +154,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "Form1.cs [Design]",
               "DocumentMoniker": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\Form1.cs",
               "RelativeDocumentMoniker": "WindowCalender\\Form1.cs",
@@ -98,18 +166,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "LoginForm.cs [Design]",
               "DocumentMoniker": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\LoginForm.cs",
               "RelativeDocumentMoniker": "WindowCalender\\LoginForm.cs",
               "ToolTip": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\LoginForm.cs [Design]",
               "RelativeToolTip": "WindowCalender\\LoginForm.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-11T10:13:28.829Z"
+              "WhenOpened": "2024-11-11T10:13:28.829Z",
+              "EditorCaption": " [Design]"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 9,
               "Title": "PlanOfDate.cs [Design]",
               "DocumentMoniker": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\PlanOfDate.cs",
               "RelativeDocumentMoniker": "WindowCalender\\PlanOfDate.cs",
@@ -120,7 +189,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 8,
               "Title": "PlanOfDate.cs",
               "DocumentMoniker": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\PlanOfDate.cs",
               "RelativeDocumentMoniker": "WindowCalender\\PlanOfDate.cs",
@@ -132,26 +201,26 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "TokenHelper.cs",
               "DocumentMoniker": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\TokenHelper.cs",
               "RelativeDocumentMoniker": "WindowCalender\\TokenHelper.cs",
               "ToolTip": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\TokenHelper.cs",
               "RelativeToolTip": "WindowCalender\\TokenHelper.cs",
-              "ViewState": "AgIAAB8AAAAAAAAAAAAgwA4AAAAuAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAD0AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-11T10:08:28.014Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Form1.cs",
               "DocumentMoniker": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\Form1.cs",
               "RelativeDocumentMoniker": "WindowCalender\\Form1.cs",
               "ToolTip": "C:\\Users\\GHM\\source\\repos\\WindowCalendar\\WindowCalender\\Form1.cs",
               "RelativeToolTip": "WindowCalender\\Form1.cs",
-              "ViewState": "AgIAAOUAAAAAAAAAAAAqwPIAAAA8AAAAAAAAAA==",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAmwA4BAABSAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-11T10:08:28.027Z",
               "EditorCaption": ""

@@ -243,6 +243,7 @@
     <Compile Include="Token.cs" />
     <Compile Include="TokenHelper.cs" />
     <Compile Include="TokenModel.cs" />
+    <Compile Include="TokenStorage.cs" />
     <Compile Include="UpdateAppointmentResult.cs" />
     <EmbeddedResource Include="ADayJob.resx">
       <DependentUpon>ADayJob.cs</DependentUpon>
