@@ -226,18 +226,16 @@ namespace WindowCalender
 
         public async Task<AppointmentResult> GetAppointmentsWithHavingReason(DateTime dt)
         {
-            HttpClient httpClient = new HttpClient();
+
 
             // get accessToken and refresh Token
 
-            TokenStorage tokenStorage = TokenStorage.Instance;
-            var accessToken = tokenStorage.accesToken;
-            var refreshToken = tokenStorage.refreshToken;
+
 
             //var cacheconnection = RedisConnection.connection.GetDatabase();
             //var accessToken = cacheconnection.StringGet("accessToken");
             //var refreshToken = cacheconnection.StringGet("refreshToken");
-            
+
             //
 
             //TokenModel tokenModel = new TokenModel
@@ -265,9 +263,11 @@ namespace WindowCalender
             //   cacheconnection.StringSet("accessToken", validateToken.accessToken);
             //}
 
-
+            HttpClient httpClient = new HttpClient();
+            TokenStorage tokenStorage = TokenStorage.Instance;
+            var accessToken = tokenStorage.accesToken;
             string dateStr = dt.ToString("yyyy-MM-dd");
-            string userId = getUserIdFromAccessToken(accessToken);  
+            string userId = tokenStorage.userId; 
             string link = $"http://localhost:5112/api/Schedules/getAllDateByUserId?dateTime={dateStr}&userId={userId}";
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             try

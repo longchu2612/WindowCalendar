@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.SqlServer.Server;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,8 @@ namespace WindowCalender
     {
         public string accesToken { get; set; }  
         public string refreshToken { get; set; }
+
+        public String userId { get; set; }
 
         private static TokenStorage _instance;
 

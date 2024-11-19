@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -49,10 +50,11 @@ namespace WindowCalender
                 //cacheconnection.StringSet("accessToken", apiResponse.accessToken);
                 //cacheconnection.StringSet("refreshToken", apiResponse.refreshToken);
 
+                // lấy ra accessToken 
                 TokenStorage tokenStorage = TokenStorage.Instance;
-
                 tokenStorage.accesToken = apiResponse.accessToken;
-                tokenStorage.refreshToken = apiResponse.refreshToken;
+                string userId = getUserIdFromAccessToken(apiResponse.accessToken);
+                tokenStorage.userId = userId;
 
                 this.Hide();
 
@@ -68,6 +70,8 @@ namespace WindowCalender
             }
              
         }
+
+
 
         
 
@@ -111,6 +115,22 @@ namespace WindowCalender
             }
         }
 
+        public string getUserIdFromAccessToken(string accessToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            if (!tokenHandler.CanReadToken(accessToken))
+            {
+                Console.WriteLine("Token không hợp lệ.");
+                return null;
+            }
+
+            var jwtToken = tokenHandler.ReadJwtToken(accessToken);
+
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "Id");
+
+
+            return userIdClaim?.Value;
+        }
         private void LoginForm_Load(object sender, EventArgs e)
         {
 
