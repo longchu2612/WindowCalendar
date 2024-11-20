@@ -298,7 +298,7 @@ namespace WindowCalender
                         return new AppointmentResult
                         {
                             Appointments = null,
-                            IsTokenValid = true
+                            IsTokenValid = false
                         };
                     }
                 }
@@ -308,7 +308,7 @@ namespace WindowCalender
                     return new AppointmentResult
                     {
                         Appointments = null,
-                        IsTokenValid = true
+                        IsTokenValid = false
                     };
                 }
             
@@ -554,7 +554,7 @@ namespace WindowCalender
                 return appointments;
 
             }
-            catch (WebException ex)
+            catch (Exception ex)
             {
                 return null;
             }

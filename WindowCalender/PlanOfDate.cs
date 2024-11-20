@@ -52,37 +52,39 @@ namespace WindowCalender
 
         public async Task<AppointmentResult> GetAppointments(DateTime dt,string userId)
         {
-            var cacheconnection = RedisConnection.connection.GetDatabase();
-            var accessToken = cacheconnection.StringGet("accessToken");
-            var refreshToken = cacheconnection.StringGet("refreshToken");
+            //var cacheconnection = RedisConnection.connection.GetDatabase();
+            //var accessToken = cacheconnection.StringGet("accessToken");
+            //var refreshToken = cacheconnection.StringGet("refreshToken");
 
-            TokenModel tokenModel = new TokenModel
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken
-            };
+            //TokenModel tokenModel = new TokenModel
+            //{
+            //    AccessToken = accessToken,
+            //    RefreshToken = refreshToken
+            //};
 
-            var validateToken = await TokenHelper.checkToken(tokenModel);
-            if(validateToken == null)
-            {
-                return new AppointmentResult
-                {
-                    Appointments = null,
-                    IsTokenValid = false
-                };
+            //var validateToken = await TokenHelper.checkToken(tokenModel);
+            //if(validateToken == null)
+            //{
+            //    return new AppointmentResult
+            //    {
+            //        Appointments = null,
+            //        IsTokenValid = false
+            //    };
 
-            }
+            //}
 
-            if(validateToken.Success == true)
-            {
-                cacheconnection.StringSet("accessToken", validateToken.accessToken);
+            //if(validateToken.Success == true)
+            //{
+            //    cacheconnection.StringSet("accessToken", validateToken.accessToken);
                 
-            }
+            //}
 
             HttpClient httpClient = new HttpClient();
             string dateStr = dt.ToString("yyyy-MM-dd");
+            TokenStorage tokenStorage = TokenStorage.Instance;
+            var accessToken = tokenStorage.accesToken;
             string link = $"http://localhost:5112/api/Schedules/getAllDateByUserIdWithoutReason?dateTime={dateStr}&userId={userId}";
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cacheconnection.StringGet("accessToken"));
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             try
             {
                 HttpResponseMessage response = await httpClient.GetAsync(link);
@@ -110,7 +112,7 @@ namespace WindowCalender
                     return new AppointmentResult
                     {
                         Appointments = null,
-                        IsTokenValid = true
+                        IsTokenValid = false
                     };
                 }
             }
@@ -134,10 +136,14 @@ namespace WindowCalender
             pnlJob.Controls.Add(fPanel);
 
 
-            var cacheconnection = RedisConnection.connection.GetDatabase();
-            var accessToken = cacheconnection.StringGet("accessToken");
-            Console.WriteLine(accessToken);
-            string userId = TokenHelper.getUserIdFromAccessToken(accessToken);
+            //var cacheconnection = RedisConnection.connection.GetDatabase();
+            //var accessToken = cacheconnection.StringGet("accessToken");
+            //Console.WriteLine(accessToken);
+            TokenStorage tokenStorage = TokenStorage.Instance;
+            var accessToken = tokenStorage.accesToken;
+            string userId = tokenStorage.userId;
+
+
 
             AppointmentResult result = await GetAppointments(dateTime,userId);
             fPanel.Controls.Clear();
@@ -146,8 +152,6 @@ namespace WindowCalender
             {
                 MessageBox.Show("Unthorization");
                 this.Close();
-                await cacheconnection.KeyDeleteAsync("accessToken");
-                await cacheconnection.KeyDeleteAsync("refreshToken");
                 LoginForm login = new LoginForm();
                 login.Show();
                 return;
@@ -225,34 +229,12 @@ namespace WindowCalender
 
         public async Task<DeleteAppointmentResult> deleteAppointment(int id)
         {
-
-            var cacheconnection = RedisConnection.connection.GetDatabase();
-            var accessToken = cacheconnection.StringGet("accessToken");
-            var refreshToken = cacheconnection.StringGet("refreshToken");
-
-            TokenModel tokenModel = new TokenModel
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken
-            };
-
-            var validateToken = await TokenHelper.checkToken(tokenModel);
-            if (validateToken == null)
-            {
-                return new DeleteAppointmentResult
-                {
-                    Success = false,
-                    TokenInvalid = true,
-                    ErrorMessage = "Token has expire and invalid"
-                };
-            }
-            if (validateToken.Success == true)
-            {
-                cacheconnection.StringSet("accessToken", validateToken.accessToken);
-            }
-
             HttpClient httpClient = new HttpClient();
-            string link = $"http://localhost:5112/api/Schedules/{id}";
+            TokenStorage tokenStorage = TokenStorage.Instance;
+            var accessToken = tokenStorage.accesToken;
+            var userId = tokenStorage.userId;
+            string link = $"http://localhost:5112/api/Schedules/{id}/{userId}";
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             try
             {
                 HttpResponseMessage response = await httpClient.DeleteAsync(link);
@@ -357,38 +339,40 @@ namespace WindowCalender
 
         public async Task<UpdateAppointmentResult> updateAppointmentWithId(int id,Appointment appointment)
         {
-            var cacheconnection = RedisConnection.connection.GetDatabase();
-            var accessToken = cacheconnection.StringGet("accessToken");
-            var refreshToken = cacheconnection.StringGet("refreshToken");
+            //var cacheconnection = RedisConnection.connection.GetDatabase();
+            //var accessToken = cacheconnection.StringGet("accessToken");
+            //var refreshToken = cacheconnection.StringGet("refreshToken");
 
-            TokenModel tokenModel = new TokenModel
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-            };
+            //TokenModel tokenModel = new TokenModel
+            //{
+            //    AccessToken = accessToken,
+            //    RefreshToken = refreshToken,
+            //};
 
-            var validateToken = await TokenHelper.checkToken(tokenModel);
-            if(validateToken == null)
-            {
-                return new UpdateAppointmentResult
-                {
-                    Success = false,
-                    TokenInvalid = true,
-                    ErrorMessage = "Token has expire and invalid"
-                };
-            }
-            if(validateToken.Success == true)
-            {
-                cacheconnection.StringSet("accessToken", validateToken.accessToken);
-            }
+            //var validateToken = await TokenHelper.checkToken(tokenModel);
+            //if(validateToken == null)
+            //{
+            //    return new UpdateAppointmentResult
+            //    {
+            //        Success = false,
+            //        TokenInvalid = true,
+            //        ErrorMessage = "Token has expire and invalid"
+            //    };
+            //}
+            //if(validateToken.Success == true)
+            //{
+            //    cacheconnection.StringSet("accessToken", validateToken.accessToken);
+            //}
 
             HttpClient httpclient = new HttpClient();
             string link = $"http://localhost:5112/api/Schedules/{id}";
+            TokenStorage tokenStorage = TokenStorage.Instance;
+            var accessToken = tokenStorage.accesToken;
             Console.WriteLine(link);
             string jsonData = JsonConvert.SerializeObject(appointment);
             Console.WriteLine(jsonData);
             StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
+            httpclient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             try
             {
                 HttpResponseMessage response = await httpclient.PutAsync(link,content);
@@ -418,7 +402,7 @@ namespace WindowCalender
                 return new UpdateAppointmentResult
                 {
                     Success = false,
-                    TokenInvalid = false
+                    TokenInvalid = true
                 };
             }
 
@@ -711,42 +695,43 @@ namespace WindowCalender
         public async Task<AddApointmentResult> addNewAppointment(DateTime dateTime)
         {
             //checkToken
-            var cacheconnection = RedisConnection.connection.GetDatabase();
-            var accessToken = cacheconnection.StringGet("accessToken");
-            var refreshToken = cacheconnection.StringGet("refreshToken");
+            //var cacheconnection = RedisConnection.connection.GetDatabase();
+            //var accessToken = cacheconnection.StringGet("accessToken");
+            //var refreshToken = cacheconnection.StringGet("refreshToken");
 
-            TokenModel tokenModel = new TokenModel
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken
-            };
+            //TokenModel tokenModel = new TokenModel
+            //{
+            //    AccessToken = accessToken,
+            //    RefreshToken = refreshToken
+            //};
 
-            var validateToken = await TokenHelper.checkToken(tokenModel);
-            if(validateToken == null)
-            {
-                //return new AddAppointmentResult
-                //{
-                //    Success = false,
-                //    TokenInvalid = true,
-                //    ErrorMessage = "Token không hợp lệ hoặc đã hết hạn."
-                //};
-                return new AddApointmentResult
-                {
-                    Success = false,
-                    TokenInvalid = true,
-                    ErrorMessage = "Token has expire or invalid"
-                };
-            }
-            if(validateToken.Success == true)
-            {
-                cacheconnection.StringSet("accessToken", validateToken.accessToken);
-            }
+            //var validateToken = await TokenHelper.checkToken(tokenModel);
+            //if(validateToken == null)
+            //{
+            //    //return new AddAppointmentResult
+            //    //{
+            //    //    Success = false,
+            //    //    TokenInvalid = true,
+            //    //    ErrorMessage = "Token không hợp lệ hoặc đã hết hạn."
+            //    //};
+            //    return new AddApointmentResult
+            //    {
+            //        Success = false,
+            //        TokenInvalid = true,
+            //        ErrorMessage = "Token has expire or invalid"
+            //    };
+            //}
+            //if(validateToken.Success == true)
+            //{
+            //    cacheconnection.StringSet("accessToken", validateToken.accessToken);
+            //}
 
             HttpClient httpClient = new HttpClient();
-            
+            TokenStorage tokenStorage = TokenStorage.Instance;
+            var accessToken = tokenStorage.accesToken;
             Appointment appointment = new Appointment() { Date = dtpkDate.Value };
             string dateStr = dateTime.ToString("yyyy-MM-dd");
-            string userId = TokenHelper.getUserIdFromAccessToken(cacheconnection.StringGet("accessToken"));
+            string userId = TokenStorage.Instance.userId;
 
             var jsonData = new {
                 dateTime = dateStr,
@@ -756,7 +741,7 @@ namespace WindowCalender
             string jsonString = JsonConvert.SerializeObject(jsonData);
             
             string link = $"http://localhost:5112/api/Schedules/insertByDate";
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cacheconnection.StringGet("accessToken"));
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             //appointments.Add(appointment);
             try
             {
@@ -795,7 +780,7 @@ namespace WindowCalender
                 return new AddApointmentResult
                 {
                     Success = false,
-                    TokenInvalid = false,
+                    TokenInvalid = true,
                     ErrorMessage = ex.Message
                 };
             }
