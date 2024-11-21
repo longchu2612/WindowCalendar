@@ -16,6 +16,7 @@ using System.Security.Policy;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Headers;
 using System.CodeDom;
+using System.Threading;
 
 namespace WindowCalender
 {
@@ -76,7 +77,7 @@ namespace WindowCalender
             //if(validateToken.Success == true)
             //{
             //    cacheconnection.StringSet("accessToken", validateToken.accessToken);
-                
+
             //}
 
             HttpClient httpClient = new HttpClient();
@@ -106,8 +107,8 @@ namespace WindowCalender
                 else
                 {
                     string errorContent = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Lỗi: {response.StatusCode}");
-                    MessageBox.Show($"Lỗi: {response.StatusCode}\nNội dung lỗi: {errorContent}");
+                    //MessageBox.Show($"Lỗi: {response.StatusCode}");
+                    //MessageBox.Show($"Lỗi: {response.StatusCode}\nNội dung lỗi: {errorContent}");
 
                     return new AppointmentResult
                     {
@@ -118,7 +119,7 @@ namespace WindowCalender
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}");
+                //MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}");
                 return new AppointmentResult
                 {
                     Appointments = null,
@@ -315,14 +316,18 @@ namespace WindowCalender
 
             //updateAppointmentbyId(appointment);
             var result = await updateAppointmentWithId(appointment.id, appointment);
-            if(result.Success == false && result.TokenInvalid == true)
+            if(result.Success == false && result.TokenInvalid == false)
             {
                 LogoutAndRedirectToLogin();
                 return;
             }
 
-            var cacheconnection = RedisConnection.connection.GetDatabase();
-            string userid = TokenHelper.getUserIdFromAccessToken(cacheconnection.StringGet("accessToken"));
+            //var cacheconnection = RedisConnection.connection.GetDatabase();
+            //string userid = TokenHelper.getUserIdFromAccessToken(cacheconnection.StringGet("accessToken"));
+
+
+            TokenStorage tokenStorage = TokenStorage.Instance;
+            var userid = tokenStorage.userId;
 
             AppointmentResult result_2 = await GetAppointments(appointment.Date,userid);
 
@@ -763,6 +768,7 @@ namespace WindowCalender
                 }
                 else
                 {
+
                     string errorContent = await response.Content.ReadAsStringAsync();
                     MessageBox.Show($"Error: {response.StatusCode}\nContent: {errorContent}");
                     return new AddApointmentResult

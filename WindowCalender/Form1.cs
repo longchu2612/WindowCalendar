@@ -98,7 +98,7 @@ namespace WindowCalender
                     Button btn = new Button() { Width = Constant.WidthOfButton + Constant.margin, Height = Constant.HeigthOfButton};
                     btn.Location = new Point(Constant.WidthOfButton + oldbutton.Location.X,oldbutton.Location.Y);
 
-                    btn.Click += btn_Click;
+                    //btn.Click += btn_Click;
                     btn.MouseUp += btn_DoubleClick;
                     pnlMatrix.Controls.Add(btn);
                     Matrix[i].Add(btn);
@@ -652,49 +652,46 @@ namespace WindowCalender
 
         private async void tmNotify_Tick(object sender, EventArgs e)
         {
-            Console.WriteLine(sender);
-            Console.WriteLine(e);
-            HttpClient httpClient = new HttpClient();
-            TimeSpan currentTime = DateTime.Now.TimeOfDay;
+            //Console.WriteLine(sender);
+            //Console.WriteLine(e);
+            //HttpClient httpClient = new HttpClient();
+            //TimeSpan currentTime = DateTime.Now.TimeOfDay;
 
-            AppointmentResult result = await GetAppointmentsWithHavingReason(DateTime.Now);
+            //AppointmentResult result = await GetAppointmentsWithHavingReason(DateTime.Now);
 
-            if (result.Appointments == null && result.IsTokenValid == false)
-            {
-                MessageBox.Show("Unthorization");
-                this.Close();
-                var cacheconnection = RedisConnection.connection.GetDatabase();
-                await cacheconnection.KeyDeleteAsync("accessToken");
-                await cacheconnection.KeyDeleteAsync("refreshToken");
-                LoginForm login = new LoginForm();
-                login.Show();
-                return;
-            }
-
-
-            if (result.Appointments == null)
-            {
-                return;
-            }
-
-            foreach(var appointment in result.Appointments)
-            {
-                DateTime appointmentStartTime = new DateTime(
-                  DateTime.Now.Year,
-                  DateTime.Now.Month,
-                  DateTime.Now.Day,
-                  appointment.fromX ?? 0,
-                  appointment.fromY ?? 0,
-                  0);
-                if (appointmentStartTime - DateTime.Now <= TimeSpan.FromMinutes(2) && appointmentStartTime > DateTime.Now)
-                {
-                    String schedule = getNotifycation(appointment);
-                    notifyIcon1.ShowBalloonTip(10000, "Thông báo lịch hẹn", schedule, ToolTipIcon.Info);
-                }
-            }
+            //if (result.Appointments == null && result.IsTokenValid == false)
+            //{
+            //    MessageBox.Show("Unthorization");
+            //    this.Close();
+            //    var cacheconnection = RedisConnection.connection.GetDatabase();
+            //    await cacheconnection.KeyDeleteAsync("accessToken");
+            //    await cacheconnection.KeyDeleteAsync("refreshToken");
+            //    LoginForm login = new LoginForm();
+            //    login.Show();
+            //    return;
+            //}
 
 
+            //if (result.Appointments == null)
+            //{
+            //    return;
+            //}
 
+            //foreach (var appointment in result.Appointments)
+            //{
+            //    DateTime appointmentStartTime = new DateTime(
+            //      DateTime.Now.Year,
+            //      DateTime.Now.Month,
+            //      DateTime.Now.Day,
+            //      appointment.fromX ?? 0,
+            //      appointment.fromY ?? 0,
+            //      0);
+            //    if (appointmentStartTime - DateTime.Now <= TimeSpan.FromMinutes(2) && appointmentStartTime > DateTime.Now)
+            //    {
+            //        String schedule = getNotifycation(appointment);
+            //        notifyIcon1.ShowBalloonTip(10000, "Thông báo lịch hẹn", schedule, ToolTipIcon.Info);
+            //    }
+            //}
         }
 
         public String getNotifycation(Appointment appointment)
