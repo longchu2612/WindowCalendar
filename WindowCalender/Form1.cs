@@ -40,16 +40,16 @@ namespace WindowCalender
 
         private List<List<Button>> matrix;
 
-      
+
 
         public List<List<Button>> Matrix { get => matrix; set => matrix = value; }
 
 
-        private List<String> dateOfWeek = new List<string>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+        private List<String> dateOfWeek = new List<string>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 
         private AppointmentService _appointmentService;
 
-        
+
         #endregion
 
         // 
@@ -82,187 +82,176 @@ namespace WindowCalender
             lstAppointment.Columns.Add("From Time", 100);
             lstAppointment.Columns.Add("To Time", 100);
 
-            
+
         }
 
 
         public void loadMatrix()
         {
-           
+
             Matrix = new List<List<Button>>();
-            Button oldbutton = new Button() { Width = -Constant.margin,Height = 0, Location = new Point(0,0)};
-            for(int i=0;i < Constant.DayOfColumn; i++)
+            Button oldbutton = new Button() { Width = -Constant.margin, Height = 0, Location = new Point(0, 0) };
+            for (int i = 0; i < Constant.DayOfColumn; i++)
             {
                 Matrix.Add(new List<Button>());
-                for(int j=0; j< Constant.DayOfWeek; j++) {
-                    Button btn = new Button() { Width = Constant.WidthOfButton + Constant.margin, Height = Constant.HeigthOfButton};
-                    btn.Location = new Point(Constant.WidthOfButton + oldbutton.Location.X,oldbutton.Location.Y);
+                for (int j = 0; j < Constant.DayOfWeek; j++) {
+                    Button btn = new Button() { Width = Constant.WidthOfButton + Constant.margin, Height = Constant.HeigthOfButton };
+                    btn.Location = new Point(Constant.WidthOfButton + oldbutton.Location.X, oldbutton.Location.Y);
 
-                    //btn.Click += btn_Click;
-                    btn.MouseUp += btn_DoubleClick;
+                    btn.Click += btn_Click;
+                    //btn.DoubleClick += btn_DoubleClick;
+
                     pnlMatrix.Controls.Add(btn);
                     Matrix[i].Add(btn);
 
                     oldbutton = btn;
                 }
                 oldbutton = new Button() { Width = -Constant.margin, Height = 0, Location = new Point(0, oldbutton.Location.Y + Constant.HeigthOfButton) };
- 
+
             }
 
             addNumberToMatrix(dtpDateTime.Value);
 
-            
+
 
         }
 
-        private void btn_DoubleClick(object sender, MouseEventArgs e)
+        //private void btn_DoubleClick(object sender, EventArgs e)
+        //{
+        //    if (string.IsNullOrEmpty((sender as Button).Text))
+        //    {
+        //        return;
+        //    }
+        //    txtNotification.Visible = false;
+        //    lstAppointment.Visible = false;
+        //    PlanOfDate planOfDate = new PlanOfDate(new DateTime(dtpDateTime.Value.Year, dtpDateTime.Value.Month, Convert.ToInt32((sender as Button).Text)));
+        //    planOfDate.ShowDialog();
+        //}
+
+
+
+        private void btn_DoubleClick(object sender, EventArgs e)
         {
-            if(e.Button == MouseButtons.Left)
+            if (string.IsNullOrEmpty((sender as Button).Text))
             {
-                clickCount++;
-                if(clickCount == 2)
-                {
-                    if (string.IsNullOrEmpty((sender as Button).Text))
-                    {
-                        return;
-                    }
-                    txtNotification.Visible = false;
-                    lstAppointment.Visible = false;
-                    HttpClient httpClient = new HttpClient();
-                    AppointmentService appointmentService = new AppointmentService(httpClient);
-                    Console.WriteLine(appointmentService);
-                    PlanOfDate planOfDate = new PlanOfDate(new DateTime(dtpDateTime.Value.Year, dtpDateTime.Value.Month, Convert.ToInt32((sender as Button).Text)));
-                    planOfDate.ShowDialog();
-                    clickCount = 0;
-                    
-                }
-                else
-                {
-                    Task.Delay(500).ContinueWith(t => clickCount = 0);
-                }
-                
+                return;
             }
+            txtNotification.Visible = false;
+            lstAppointment.Visible = false;
+            PlanOfDate planOfDate = new PlanOfDate(new DateTime(dtpDateTime.Value.Year, dtpDateTime.Value.Month, Convert.ToInt32((sender as Button).Text)));
+            planOfDate.ShowDialog();
+
+            //if (e.Button == MouseButtons.Left)
+            //{
+            //    clickCount++;
+            //    if (clickCount == 2)
+            //    {
+            //        if (string.IsNullOrEmpty((sender as Button).Text))
+            //        {
+            //            return;
+            //        }
+            //        txtNotification.Visible = false;
+            //        lstAppointment.Visible = false;
+            //        //HttpClient httpClient = new HttpClient();
+            //        //AppointmentService appointmentService = new AppointmentService(httpClient);
+            //        //Console.WriteLine(appointmentService);
+            //        PlanOfDate planOfDate = new PlanOfDate(new DateTime(dtpDateTime.Value.Year, dtpDateTime.Value.Month, Convert.ToInt32((sender as Button).Text)));
+            //        planOfDate.ShowDialog();
+            //        clickCount = 0;
+
+            //    }
+            //    else
+            //    {
+            //        Task.Delay(500).ContinueWith(t => clickCount = 0);
+            //    }
+
+            //}
 
         }
 
         private async void btn_Click(object sender, EventArgs e)
         {
-            Button buttonClicked = sender as Button;
-            int year = dtpDateTime.Value.Year;
-            int month = dtpDateTime.Value.Month;
 
-            if(buttonClicked.Text == "")
+            if (string.IsNullOrEmpty((sender as Button).Text))
             {
-                txtNotification.Text = "";
-                lstAppointment.Visible= false;
                 return;
             }
+            txtNotification.Visible = false;
+            lstAppointment.Visible = false;
+            PlanOfDate planOfDate = new PlanOfDate(new DateTime(dtpDateTime.Value.Year, dtpDateTime.Value.Month, Convert.ToInt32((sender as Button).Text)));
+            planOfDate.ShowDialog();
 
-           
-            
+            //-------------------------------------------------------
+            //Button buttonClicked = sender as Button;
+            //int year = dtpDateTime.Value.Year;
+            //int month = dtpDateTime.Value.Month;
 
-            DateTime dateTime = new DateTime(year,month,Convert.ToInt32(buttonClicked.Text));
-            Console.WriteLine(dateTime);
+            //if(buttonClicked.Text == "")
+            //{
+            //    txtNotification.Text = "";
+            //    lstAppointment.Visible= false;
+            //    return;
+            //}
 
-            //List<Appointment> appointments = await GetAppointmentsWithHavingReason(dateTime);
+            //DateTime dateTime = new DateTime(year,month,Convert.ToInt32(buttonClicked.Text));
+            //Console.WriteLine(dateTime);
 
-            //163
 
-            AppointmentResult result = await GetAppointmentsWithHavingReason(dateTime);
 
-            //List<Appointment> appointments = getAllAppointments();
+            //AppointmentResult result = await GetAppointmentsWithHavingReason(dateTime);
 
-            if (result.Appointments == null && result.IsTokenValid == false)
-            {
-                MessageBox.Show("Unthorization");
-                this.Close();
-                var cacheconnection = RedisConnection.connection.GetDatabase();
-                await cacheconnection.KeyDeleteAsync("accessToken");
-                await cacheconnection.KeyDeleteAsync("refreshToken");
-                LoginForm login = new LoginForm();
-                login.Show();
-                return;
-            }
 
-            if (result.Appointments == null || result.Appointments.Count == 0)
-            {
-                    txtNotification.Text = "Hôm này bạn không có lịch hẹn nào!";
-                    txtNotification.Visible = true;
-                    lstAppointment.Visible = false;
-            }
-            else
-            {
-                    int count = result.Appointments.Count;
-                    txtNotification.Text = $"Hôm nay bạn có {count} lịch hẹn!";
-                    txtNotification.Visible = true;
+            //if (result.Appointments == null && result.IsTokenValid == false)
+            //{
+            //    MessageBox.Show("Unthorization");
+            //    this.Close();
+            //    LoginForm login = new LoginForm();
+            //    login.Show();
+            //    return;
+            //}
 
-                    lstAppointment.Visible = true;
+            //if (result.Appointments == null || result.Appointments.Count == 0)
+            //{
+            //        txtNotification.Text = "Hôm này bạn không có lịch hẹn nào!";
+            //        txtNotification.Visible = true;
+            //        lstAppointment.Visible = false;
+            //}
+            //else
+            //{
+            //        int count = result.Appointments.Count;
+            //        txtNotification.Text = $"Hôm nay bạn có {count} lịch hẹn!";
+            //        txtNotification.Visible = true;
 
-                    lstAppointment.Items.Clear();
+            //        lstAppointment.Visible = true;
 
-                    Console.WriteLine(result.Appointments);
+            //        lstAppointment.Items.Clear();
 
-                    foreach (var appointment in result.Appointments)
-                    {
-                        //ListViewItem item = new ListViewItem(appointment.Reason);
-                        Console.WriteLine(appointment.reason);
-                        ListViewItem item = new ListViewItem(appointment.reason);
-                        string fromCoordinates = (appointment.fromX.HasValue ? appointment.fromX.Value.ToString("D2") : "00") +
-                             ":" +
-                             (appointment.fromY.HasValue ? appointment.fromY.Value.ToString("D2") : "00");
-                        item.SubItems.Add(fromCoordinates);
-                        string toCoordinates = (appointment.toX.HasValue ? appointment.toX.Value.ToString("D2") : "00") +
-                           ":" +
-                           (appointment.toY.HasValue ? appointment.toY.Value.ToString("D2") : "00");
-                        item.SubItems.Add(toCoordinates);
-                        //Console.WriteLine(item);
-                        lstAppointment.Items.Add(item);
-            }
+            //        Console.WriteLine(result.Appointments);
 
-            }
-            
+            //        foreach (var appointment in result.Appointments)
+            //        {
+            //            //ListViewItem item = new ListViewItem(appointment.Reason);
+            //            Console.WriteLine(appointment.reason);
+            //            ListViewItem item = new ListViewItem(appointment.reason);
+            //            string fromCoordinates = (appointment.fromX.HasValue ? appointment.fromX.Value.ToString("D2") : "00") +
+            //                 ":" +
+            //                 (appointment.fromY.HasValue ? appointment.fromY.Value.ToString("D2") : "00");
+            //            item.SubItems.Add(fromCoordinates);
+            //            string toCoordinates = (appointment.toX.HasValue ? appointment.toX.Value.ToString("D2") : "00") +
+            //               ":" +
+            //               (appointment.toY.HasValue ? appointment.toY.Value.ToString("D2") : "00");
+            //            item.SubItems.Add(toCoordinates);
+            //            //Console.WriteLine(item);
+            //            lstAppointment.Items.Add(item);
+            //        }
+
+            //}
+
 
         }
 
         public async Task<AppointmentResult> GetAppointmentsWithHavingReason(DateTime dt)
         {
-
-
-            // get accessToken and refresh Token
-
-
-
-            //var cacheconnection = RedisConnection.connection.GetDatabase();
-            //var accessToken = cacheconnection.StringGet("accessToken");
-            //var refreshToken = cacheconnection.StringGet("refreshToken");
-
-            //
-
-            //TokenModel tokenModel = new TokenModel
-            //{
-            //    AccessToken = accessToken,
-            //    RefreshToken = refreshToken
-            //};
-
-            //var validateToken = await checkToken(tokenModel);
-
-            //var validateToken = await TokenHelper.checkToken(tokenModel);
-
-            //if (validateToken == null)
-            //{
-            //    return new AppointmentResult
-            //    {
-            //        Appointments = null,
-            //        IsTokenValid = false
-            //    };
-
-            //}
-
-            //if (validateToken.Success == true)
-            //{
-            //   cacheconnection.StringSet("accessToken", validateToken.accessToken);
-            //}
-
             HttpClient httpClient = new HttpClient();
             TokenStorage tokenStorage = TokenStorage.Instance;
             var accessToken = tokenStorage.accesToken;
@@ -270,31 +259,31 @@ namespace WindowCalender
             string userId = tokenStorage.userId; 
             string link = $"http://localhost:5112/api/Schedules/getAllDateByUserId?dateTime={dateStr}&userId={userId}";
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            try
-                {
+
+              try
+              {
                     HttpResponseMessage response = await httpClient.GetAsync(link);
 
                     if (response.IsSuccessStatusCode)
                     {
                         string responseData = await response.Content.ReadAsStringAsync();
 
-                        Console.WriteLine(responseData);
+                        SchedulesResponseDTO responseDTO = JsonConvert.DeserializeObject<SchedulesResponseDTO>(responseData);
 
-                        List<Appointment> schedules = JsonConvert.DeserializeObject<List<Appointment>>(responseData);
-
+                        if(responseDTO.accessToken != null)
+                        {
+                          tokenStorage.accesToken = responseDTO.accessToken;
+                        }
+ 
                         return new AppointmentResult
                         {
-                            Appointments = schedules,
+                            Appointments = responseDTO.scheduleList,
                             IsTokenValid = true
                         };
 
                     }
                     else
                     {
-                        string errorContent = await response.Content.ReadAsStringAsync();
-                        MessageBox.Show($"Lỗi: {response.StatusCode}");
-                        MessageBox.Show($"Lỗi: {response.StatusCode}\nNội dung lỗi: {errorContent}");
-
                         return new AppointmentResult
                         {
                             Appointments = null,
@@ -487,27 +476,6 @@ namespace WindowCalender
             dtpDateTime.Value = dtpDateTime.Value.AddMonths(1);
         }
 
-
-
-        //private List<Appointment> GetAppointments()
-        //{
-            
-        //    try
-        //    {
-        //        con = new SqlConnection(connectstring);
-        //        con.Open();
-        //        cmd = new SqlCommand("select * from dbo.Schedule");
-        //        adt = new SqlDataAdapter(cmd);
-        //        adt.Fill(dt);
-
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //    }
-        //}
-
         private void AddSchedule()
         {
 
@@ -570,85 +538,9 @@ namespace WindowCalender
             Appointment[] appointments = (Appointment[])data;
             return appointments.ToList();
         }
-        //public List<Appointment> getAllApointments(DateTime dateTime)
-        //{
-        //    List<Appointment> appointments = new List<Appointment>();
-
-        //    try
-        //    {
-        //        con = new SqlConnection(connectstring);
-        //        con.Open();
-        //        string query = "select * from dbo.Schedules where date = @dateParam";
-        //        cmd = new SqlCommand(query, con);
-
-        //        cmd.Parameters.AddWithValue("@dateParam", dateTime.Date);
-
-        //        using (SqlDataReader reader = cmd.ExecuteReader())
-        //        {
-        //            if (reader.HasRows == false)
-        //            {
-        //                return null;
-        //            }
-        //            while (reader.Read())
-        //            {
-        //                Appointment appointment = new Appointment();
-        //                if (!reader.IsDBNull(reader.GetOrdinal("id")))
-        //                {
-        //                    appointment.Id = reader.GetInt32(reader.GetOrdinal("id"));
-        //                }
-
-        //                if (!reader.IsDBNull(reader.GetOrdinal("reason")))
-        //                {
-        //                    appointment.Reason = reader.GetString(reader.GetOrdinal("reason"));
-        //                }
-
-
-        //                Point fromPoint = new Point();
-
-
-        //                if (!reader.IsDBNull(reader.GetOrdinal("fromX")))
-        //                {
-        //                    fromPoint.X = reader.GetInt32(reader.GetOrdinal("fromX"));
-        //                }
-        //                if (!reader.IsDBNull(reader.GetOrdinal("fromY")))
-        //                {
-        //                    fromPoint.Y = reader.GetInt32(reader.GetOrdinal("fromY"));
-        //                }
-
-        //                appointment.From = fromPoint;
-
-        //                Point toPoint = new Point();
-
-        //                if (!reader.IsDBNull(reader.GetOrdinal("toX")))
-        //                {
-        //                    toPoint.X = reader.GetInt32(reader.GetOrdinal("toX"));
-        //                }
-        //                if (!reader.IsDBNull(reader.GetOrdinal("toY")))
-        //                {
-        //                    toPoint.Y = reader.GetInt32(reader.GetOrdinal("toY"));
-        //                }
-
-        //                appointment.To = toPoint;
-        //                appointments.Add(appointment);
-
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("Error :" + ex.Message);
-        //    }
-        //    finally
-        //    {
-
-        //        if (con != null && con.State == ConnectionState.Open)
-        //        {
-        //            con.Close();
-        //        }
-        //    }
-        //    return appointments;
-
-        //}
+        
+       
+        
 
         private async void tmNotify_Tick(object sender, EventArgs e)
         {
@@ -698,6 +590,31 @@ namespace WindowCalender
         {
             
             return $"Sắp đến lịch hẹn: {appointment.reason}\nGiờ bắt đầu: {appointment.fromX:D2}: {appointment.fromY:D2}\n đến {appointment.toX:D2} : {appointment.toY:D2}";
+        }
+
+        private void pnlMatrix_DoubleClick(object sender, EventArgs e)
+        {
+            MessageBox.Show("dupck");
+        }
+
+        private void pnlMatrix_MouseUp(object sender, MouseEventArgs e)
+        {
+            //MessageBox.Show("muoup");
+        }
+
+        private void pnlMatrix_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("click");
+        }
+
+        private void pnlMatrix_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            //MessageBox.Show("dupck");
+        }
+
+        private void pnlMatrix_ClientSizeChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

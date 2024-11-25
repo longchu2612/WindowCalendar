@@ -48,38 +48,11 @@ namespace WindowCalender
             InitializeComponent();
             this.dateTime = dateTime;
             dtpkDate.Value= dateTime;
-            //displayJobsOfDay(dateTime);
+            
         }
 
         public async Task<AppointmentResult> GetAppointments(DateTime dt,string userId)
         {
-            //var cacheconnection = RedisConnection.connection.GetDatabase();
-            //var accessToken = cacheconnection.StringGet("accessToken");
-            //var refreshToken = cacheconnection.StringGet("refreshToken");
-
-            //TokenModel tokenModel = new TokenModel
-            //{
-            //    AccessToken = accessToken,
-            //    RefreshToken = refreshToken
-            //};
-
-            //var validateToken = await TokenHelper.checkToken(tokenModel);
-            //if(validateToken == null)
-            //{
-            //    return new AppointmentResult
-            //    {
-            //        Appointments = null,
-            //        IsTokenValid = false
-            //    };
-
-            //}
-
-            //if(validateToken.Success == true)
-            //{
-            //    cacheconnection.StringSet("accessToken", validateToken.accessToken);
-
-            //}
-
             HttpClient httpClient = new HttpClient();
             string dateStr = dt.ToString("yyyy-MM-dd");
             TokenStorage tokenStorage = TokenStorage.Instance;
@@ -94,12 +67,15 @@ namespace WindowCalender
                     string responseData = await response.Content.ReadAsStringAsync();
 
                     Console.WriteLine(responseData);
-
-                    List<Appointment> schedules = JsonConvert.DeserializeObject<List<Appointment>>(responseData);
+                    SchedulesResponseDTO responseDTO = JsonConvert.DeserializeObject<SchedulesResponseDTO>(responseData);
+                    if(responseDTO.accessToken != null)
+                    {
+                        tokenStorage.accesToken = responseDTO.accessToken;
+                    }
 
                     return new AppointmentResult
                     {
-                        Appointments = schedules,
+                        Appointments = responseDTO.scheduleList,
                         IsTokenValid = true
                     };
 
@@ -107,9 +83,7 @@ namespace WindowCalender
                 else
                 {
                     string errorContent = await response.Content.ReadAsStringAsync();
-                    //MessageBox.Show($"Lỗi: {response.StatusCode}");
-                    //MessageBox.Show($"Lỗi: {response.StatusCode}\nNội dung lỗi: {errorContent}");
-
+                   
                     return new AppointmentResult
                     {
                         Appointments = null,
@@ -119,7 +93,7 @@ namespace WindowCalender
             }
             catch (Exception ex)
             {
-                //MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}");
+               
                 return new AppointmentResult
                 {
                     Appointments = null,
@@ -130,16 +104,8 @@ namespace WindowCalender
 
         public async Task displayJobsOfDay(DateTime dateTime)
         {
-
-
-
             fPanel.Size = new Size(790, 320);
             pnlJob.Controls.Add(fPanel);
-
-
-            //var cacheconnection = RedisConnection.connection.GetDatabase();
-            //var accessToken = cacheconnection.StringGet("accessToken");
-            //Console.WriteLine(accessToken);
             TokenStorage tokenStorage = TokenStorage.Instance;
             var accessToken = tokenStorage.accesToken;
             string userId = tokenStorage.userId;
@@ -177,9 +143,7 @@ namespace WindowCalender
 
                 for (int i = 0; i < result.Appointments.Count; i++)
                 {
-                    //Console.WriteLine(appointments[i]);
                     ADayJob dayJob = new ADayJob(result.Appointments[i]);
-                    //Console.WriteLine(result.Appointments[i]);
                     dayJob.Edited += DayJob_Edited;
                     dayJob.Deleted += DayJob_Deleted;
                     fPanel.Controls.Add(dayJob);
@@ -187,14 +151,6 @@ namespace WindowCalender
             }
 
         }
-
-        //public List<Appointment> getAppointmentsByDate(DateTime dateTime)
-        //{
-            
-
-            
-        //}
-
         private async void DayJob_Deleted(object sender, EventArgs e)
         {
             ADayJob uc = sender as ADayJob;
@@ -239,8 +195,17 @@ namespace WindowCalender
             try
             {
                 HttpResponseMessage response = await httpClient.DeleteAsync(link);
+
+                string responseData = await response.Content.ReadAsStringAsync();
+
+                SchedulesResponseDTO responseDTO = JsonConvert.DeserializeObject<SchedulesResponseDTO>(responseData);
+
                 if (response.IsSuccessStatusCode)
                 {
+                    if(responseDTO.accessToken != null)
+                    {
+                        tokenStorage.accesToken = responseDTO.accessToken;
+                    }
                     return new DeleteAppointmentResult
                     {
                         Success = true
@@ -276,15 +241,6 @@ namespace WindowCalender
             
             Appointment appointment = uc.Appointment;
             Console.WriteLine(appointment);
-
-            //for (int i = 0; i < appointments.Count; i++)
-            //{
-            //    if (appointments[i].Id == appointment.Id)  
-            //    {
-            //        appointments[i] = appointment;  
-            //        break;
-            //    }
-            //}
             var validationResults = new List<ValidationResult>();
             var context = new ValidationContext(appointment, serviceProvider: null, items: null);
             bool isValid = Validator.TryValidateObject(appointment, context, validationResults, true);
@@ -308,24 +264,12 @@ namespace WindowCalender
                 return;
             }
             
-
-
-
-
-
-
-            //updateAppointmentbyId(appointment);
             var result = await updateAppointmentWithId(appointment.id, appointment);
             if(result.Success == false && result.TokenInvalid == false)
             {
                 LogoutAndRedirectToLogin();
                 return;
             }
-
-            //var cacheconnection = RedisConnection.connection.GetDatabase();
-            //string userid = TokenHelper.getUserIdFromAccessToken(cacheconnection.StringGet("accessToken"));
-
-
             TokenStorage tokenStorage = TokenStorage.Instance;
             var userid = tokenStorage.userId;
 
@@ -344,31 +288,6 @@ namespace WindowCalender
 
         public async Task<UpdateAppointmentResult> updateAppointmentWithId(int id,Appointment appointment)
         {
-            //var cacheconnection = RedisConnection.connection.GetDatabase();
-            //var accessToken = cacheconnection.StringGet("accessToken");
-            //var refreshToken = cacheconnection.StringGet("refreshToken");
-
-            //TokenModel tokenModel = new TokenModel
-            //{
-            //    AccessToken = accessToken,
-            //    RefreshToken = refreshToken,
-            //};
-
-            //var validateToken = await TokenHelper.checkToken(tokenModel);
-            //if(validateToken == null)
-            //{
-            //    return new UpdateAppointmentResult
-            //    {
-            //        Success = false,
-            //        TokenInvalid = true,
-            //        ErrorMessage = "Token has expire and invalid"
-            //    };
-            //}
-            //if(validateToken.Success == true)
-            //{
-            //    cacheconnection.StringSet("accessToken", validateToken.accessToken);
-            //}
-
             HttpClient httpclient = new HttpClient();
             string link = $"http://localhost:5112/api/Schedules/{id}";
             TokenStorage tokenStorage = TokenStorage.Instance;
@@ -384,6 +303,14 @@ namespace WindowCalender
                 Console.WriteLine(response);
                 if (response.IsSuccessStatusCode)
                 {
+                    string responseData = await response.Content.ReadAsStringAsync();
+
+                    SchedulesResponseDTO responseDTO = JsonConvert.DeserializeObject<SchedulesResponseDTO>(responseData);
+                    if(responseDTO.accessToken != null)
+                    {
+                        tokenStorage.accesToken = responseDTO.accessToken;
+                    }
+
                     MessageBox.Show("Chỉnh sửa thành công!");
                     
                     return new UpdateAppointmentResult
@@ -430,91 +357,6 @@ namespace WindowCalender
 
 
         }
-
-
-       
-
-        //public List<Appointment> getAllApointments(DateTime dateTime)
-        //{
-
-        //    //List<Appointment> appointments = new List<Appointment>();
-        //    appointments.Clear();
-        //    try
-        //    {
-        //        con = new SqlConnection(connectionString);
-        //        con.Open();
-        //        string query = "select * from dbo.Schedules where date = @dateParam";
-        //        cmd = new SqlCommand(query, con);
-
-        //        cmd.Parameters.AddWithValue("@dateParam", dateTime.Date);
-
-        //        using (SqlDataReader reader = cmd.ExecuteReader())
-        //        {
-        //            if(reader.HasRows == false)
-        //            {
-        //                return appointments;
-        //            }
-        //            while (reader.Read())
-        //            {   
-        //                Appointment appointment = new Appointment();
-        //                if (!reader.IsDBNull(reader.GetOrdinal("id")))
-        //                {
-        //                    appointment.Id = reader.GetInt32(reader.GetOrdinal("id"));
-        //                }
-
-        //                if (!reader.IsDBNull(reader.GetOrdinal("reason")))
-        //                {
-        //                    appointment.Reason = reader.GetString(reader.GetOrdinal("reason"));
-        //                }
-
-
-        //                Point fromPoint = new Point();
-
-
-        //                if (!reader.IsDBNull(reader.GetOrdinal("fromX")))
-        //                {
-        //                    fromPoint.X = reader.GetInt32(reader.GetOrdinal("fromX"));
-        //                }
-        //                if (!reader.IsDBNull(reader.GetOrdinal("fromY")))
-        //                {
-        //                    fromPoint.Y = reader.GetInt32(reader.GetOrdinal("fromY"));
-        //                }
-
-        //                appointment.From = fromPoint;   
-
-        //                Point toPoint = new Point();
-
-        //                if (!reader.IsDBNull(reader.GetOrdinal("toX")))
-        //                {
-        //                    toPoint.X = reader.GetInt32(reader.GetOrdinal("toX"));
-        //                }
-        //                if (!reader.IsDBNull(reader.GetOrdinal("toY")))
-        //                {
-        //                    toPoint.Y = reader.GetInt32(reader.GetOrdinal("toY"));
-        //                }
-
-        //                appointment.To = toPoint;
-        //                appointments.Add(appointment);
-
-        //            }
-        //        }
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        MessageBox.Show("Error :" + ex.Message);
-        //    }
-        //    finally
-        //    {
-                
-        //        if (con != null && con.State == ConnectionState.Open)
-        //        {
-        //            con.Close();
-        //        }
-        //    }
-        //    return appointments;
-
-        //}
-
         public void updateAppointmentbyId(Appointment appointment)
         {
             try
@@ -599,11 +441,6 @@ namespace WindowCalender
             return true;
 
         }
-
-        //public async Task deleteAppointment(int id)
-        //{
-
-        //}
 
         public void deleteAppointmentById(int id)
         {
@@ -699,38 +536,6 @@ namespace WindowCalender
 
         public async Task<AddApointmentResult> addNewAppointment(DateTime dateTime)
         {
-            //checkToken
-            //var cacheconnection = RedisConnection.connection.GetDatabase();
-            //var accessToken = cacheconnection.StringGet("accessToken");
-            //var refreshToken = cacheconnection.StringGet("refreshToken");
-
-            //TokenModel tokenModel = new TokenModel
-            //{
-            //    AccessToken = accessToken,
-            //    RefreshToken = refreshToken
-            //};
-
-            //var validateToken = await TokenHelper.checkToken(tokenModel);
-            //if(validateToken == null)
-            //{
-            //    //return new AddAppointmentResult
-            //    //{
-            //    //    Success = false,
-            //    //    TokenInvalid = true,
-            //    //    ErrorMessage = "Token không hợp lệ hoặc đã hết hạn."
-            //    //};
-            //    return new AddApointmentResult
-            //    {
-            //        Success = false,
-            //        TokenInvalid = true,
-            //        ErrorMessage = "Token has expire or invalid"
-            //    };
-            //}
-            //if(validateToken.Success == true)
-            //{
-            //    cacheconnection.StringSet("accessToken", validateToken.accessToken);
-            //}
-
             HttpClient httpClient = new HttpClient();
             TokenStorage tokenStorage = TokenStorage.Instance;
             var accessToken = tokenStorage.accesToken;
@@ -747,7 +552,7 @@ namespace WindowCalender
             
             string link = $"http://localhost:5112/api/Schedules/insertByDate";
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            //appointments.Add(appointment);
+            
             try
             {
                 HttpContent content = new StringContent(jsonString, System.Text.Encoding.UTF8, "application/json");
@@ -755,7 +560,15 @@ namespace WindowCalender
                 if (response.IsSuccessStatusCode)
                 {
                     string jsonResponse = await response.Content.ReadAsStringAsync();
-                    Appointment appointment_2 = JsonConvert.DeserializeObject<Appointment>(jsonResponse);
+
+                    SchedulesResponseDTO responseDTO = JsonConvert.DeserializeObject<SchedulesResponseDTO>(jsonResponse);
+
+                    if(responseDTO.accessToken != null)
+                    {
+                        tokenStorage.accesToken = responseDTO.accessToken;
+                    }
+
+                    Appointment appointment_2 = responseDTO.scheduleList[0];
                     appointments.Add(appointment_2);
                     ADayJob aDayJob = new ADayJob(appointment_2);
                     aDayJob.Edited += DayJob_Edited;
@@ -823,9 +636,9 @@ namespace WindowCalender
         // 
         public async void mnsThemViec_Click(object sender, EventArgs e)
         {
-             var cacheconnection = RedisConnection.connection.GetDatabase();
-            var accessToken = cacheconnection.StringGet("accessToken");
-            var refreshToken = cacheconnection.StringGet("refreshToken");
+            //var cacheconnection = RedisConnection.connection.GetDatabase();
+            //var accessToken = cacheconnection.StringGet("accessToken");
+            //var refreshToken = cacheconnection.StringGet("refreshToken");
 
             //TokenModel tokenModel = new TokenModel
             //{
@@ -852,11 +665,13 @@ namespace WindowCalender
             //    cacheconnection.StringSet("accessToken", validateToken.accessToken);
 
             //}
-            string userId = TokenHelper.getUserIdFromAccessToken(accessToken);
+            TokenStorage tokenStorage = TokenStorage.Instance;
+            string userId = tokenStorage.userId;
+            //string userId = TokenHelper.getUserIdFromAccessToken(accessToken);
             AppointmentResult result = await GetAppointments(dtpkDate.Value,userId);
-            var access = cacheconnection.StringGet("accessToken");
-            Console.WriteLine(access);
-            Console.WriteLine(result);
+            //var access = cacheconnection.StringGet("accessToken");
+            //Console.WriteLine(access);
+            //Console.WriteLine(result);
             
             if (result.Appointments == null && result.IsTokenValid == false)
             {
@@ -885,9 +700,6 @@ namespace WindowCalender
                 form.Hide();
             }
             // Xóa accessToken và refreshToken khỏi cache
-            var cacheconnection = RedisConnection.connection.GetDatabase();
-            await cacheconnection.KeyDeleteAsync("accessToken");
-            await cacheconnection.KeyDeleteAsync("refreshToken");
             LoginForm login = new LoginForm();
             login.Show();
             

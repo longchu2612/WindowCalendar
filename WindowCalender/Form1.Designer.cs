@@ -51,6 +51,7 @@
             this.pnlMatrix = new System.Windows.Forms.Panel();
             this.tmNotify = new System.Windows.Forms.Timer(this.components);
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -64,7 +65,7 @@
             this.panel1.Controls.Add(this.panel4);
             this.panel1.Controls.Add(this.panel2);
             this.panel1.Location = new System.Drawing.Point(9, 10);
-            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(694, 557);
             this.panel1.TabIndex = 0;
@@ -75,7 +76,7 @@
             this.panel3.Controls.Add(this.btnToday);
             this.panel3.Controls.Add(this.dtpDateTime);
             this.panel3.Location = new System.Drawing.Point(38, 2);
-            this.panel3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panel3.Margin = new System.Windows.Forms.Padding(2);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(635, 50);
             this.panel3.TabIndex = 1;
@@ -85,7 +86,7 @@
             // 
             this.btnToday.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.btnToday.Location = new System.Drawing.Point(411, 12);
-            this.btnToday.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnToday.Margin = new System.Windows.Forms.Padding(2);
             this.btnToday.Name = "btnToday";
             this.btnToday.Size = new System.Drawing.Size(71, 20);
             this.btnToday.TabIndex = 1;
@@ -96,7 +97,7 @@
             // dtpDateTime
             // 
             this.dtpDateTime.Location = new System.Drawing.Point(177, 15);
-            this.dtpDateTime.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.dtpDateTime.Margin = new System.Windows.Forms.Padding(2);
             this.dtpDateTime.Name = "dtpDateTime";
             this.dtpDateTime.Size = new System.Drawing.Size(198, 20);
             this.dtpDateTime.TabIndex = 0;
@@ -114,7 +115,7 @@
             this.panel4.Controls.Add(this.btnTuesday);
             this.panel4.Controls.Add(this.btnMonday);
             this.panel4.Location = new System.Drawing.Point(38, 57);
-            this.panel4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panel4.Margin = new System.Windows.Forms.Padding(2);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(633, 43);
             this.panel4.TabIndex = 0;
@@ -122,7 +123,7 @@
             // btnNextMonth
             // 
             this.btnNextMonth.Location = new System.Drawing.Point(588, 7);
-            this.btnNextMonth.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnNextMonth.Margin = new System.Windows.Forms.Padding(2);
             this.btnNextMonth.Name = "btnNextMonth";
             this.btnNextMonth.Size = new System.Drawing.Size(43, 29);
             this.btnNextMonth.TabIndex = 7;
@@ -133,7 +134,7 @@
             // btnPreviousMonth
             // 
             this.btnPreviousMonth.Location = new System.Drawing.Point(41, 7);
-            this.btnPreviousMonth.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnPreviousMonth.Margin = new System.Windows.Forms.Padding(2);
             this.btnPreviousMonth.Name = "btnPreviousMonth";
             this.btnPreviousMonth.Size = new System.Drawing.Size(43, 29);
             this.btnPreviousMonth.TabIndex = 0;
@@ -144,7 +145,7 @@
             // btnThursday
             // 
             this.btnThursday.Location = new System.Drawing.Point(307, 3);
-            this.btnThursday.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnThursday.Margin = new System.Windows.Forms.Padding(2);
             this.btnThursday.Name = "btnThursday";
             this.btnThursday.Size = new System.Drawing.Size(69, 36);
             this.btnThursday.TabIndex = 3;
@@ -154,7 +155,7 @@
             // btnSunday
             // 
             this.btnSunday.Location = new System.Drawing.Point(526, 4);
-            this.btnSunday.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSunday.Margin = new System.Windows.Forms.Padding(2);
             this.btnSunday.Name = "btnSunday";
             this.btnSunday.Size = new System.Drawing.Size(57, 36);
             this.btnSunday.TabIndex = 6;
@@ -164,7 +165,7 @@
             // btnSaturday
             // 
             this.btnSaturday.Location = new System.Drawing.Point(453, 3);
-            this.btnSaturday.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSaturday.Margin = new System.Windows.Forms.Padding(2);
             this.btnSaturday.Name = "btnSaturday";
             this.btnSaturday.Size = new System.Drawing.Size(69, 36);
             this.btnSaturday.TabIndex = 5;
@@ -174,7 +175,7 @@
             // btnFriday
             // 
             this.btnFriday.Location = new System.Drawing.Point(380, 4);
-            this.btnFriday.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnFriday.Margin = new System.Windows.Forms.Padding(2);
             this.btnFriday.Name = "btnFriday";
             this.btnFriday.Size = new System.Drawing.Size(68, 35);
             this.btnFriday.TabIndex = 4;
@@ -184,7 +185,7 @@
             // btnWednesday
             // 
             this.btnWednesday.Location = new System.Drawing.Point(223, 4);
-            this.btnWednesday.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnWednesday.Margin = new System.Windows.Forms.Padding(2);
             this.btnWednesday.Name = "btnWednesday";
             this.btnWednesday.Size = new System.Drawing.Size(80, 36);
             this.btnWednesday.TabIndex = 2;
@@ -194,7 +195,7 @@
             // btnTuesday
             // 
             this.btnTuesday.Location = new System.Drawing.Point(157, 6);
-            this.btnTuesday.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnTuesday.Margin = new System.Windows.Forms.Padding(2);
             this.btnTuesday.Name = "btnTuesday";
             this.btnTuesday.Size = new System.Drawing.Size(62, 33);
             this.btnTuesday.TabIndex = 1;
@@ -204,7 +205,7 @@
             // btnMonday
             // 
             this.btnMonday.Location = new System.Drawing.Point(93, 5);
-            this.btnMonday.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnMonday.Margin = new System.Windows.Forms.Padding(2);
             this.btnMonday.Name = "btnMonday";
             this.btnMonday.Size = new System.Drawing.Size(59, 36);
             this.btnMonday.TabIndex = 0;
@@ -216,7 +217,7 @@
             this.panel2.Controls.Add(this.panel5);
             this.panel2.Controls.Add(this.pnlMatrix);
             this.panel2.Location = new System.Drawing.Point(2, 57);
-            this.panel2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panel2.Margin = new System.Windows.Forms.Padding(2);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(670, 498);
             this.panel2.TabIndex = 0;
@@ -226,7 +227,7 @@
             this.panel5.Controls.Add(this.lstAppointment);
             this.panel5.Controls.Add(this.txtNotification);
             this.panel5.Location = new System.Drawing.Point(36, 323);
-            this.panel5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panel5.Margin = new System.Windows.Forms.Padding(2);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(622, 173);
             this.panel5.TabIndex = 2;
@@ -235,7 +236,7 @@
             // 
             this.lstAppointment.HideSelection = false;
             this.lstAppointment.Location = new System.Drawing.Point(130, 34);
-            this.lstAppointment.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.lstAppointment.Margin = new System.Windows.Forms.Padding(2);
             this.lstAppointment.Name = "lstAppointment";
             this.lstAppointment.Size = new System.Drawing.Size(371, 120);
             this.lstAppointment.TabIndex = 1;
@@ -260,11 +261,16 @@
             // pnlMatrix
             // 
             this.pnlMatrix.Location = new System.Drawing.Point(36, 48);
-            this.pnlMatrix.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pnlMatrix.Margin = new System.Windows.Forms.Padding(2);
             this.pnlMatrix.Name = "pnlMatrix";
             this.pnlMatrix.Size = new System.Drawing.Size(622, 270);
             this.pnlMatrix.TabIndex = 1;
+            this.pnlMatrix.ClientSizeChanged += new System.EventHandler(this.pnlMatrix_ClientSizeChanged);
+            this.pnlMatrix.Click += new System.EventHandler(this.pnlMatrix_Click);
             this.pnlMatrix.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlMatrix_Paint);
+            this.pnlMatrix.DoubleClick += new System.EventHandler(this.pnlMatrix_DoubleClick);
+            this.pnlMatrix.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pnlMatrix_MouseDoubleClick);
+            this.pnlMatrix.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlMatrix_MouseUp);
             // 
             // tmNotify
             // 
@@ -278,13 +284,18 @@
             this.notifyIcon1.Text = "notifyIcon1";
             this.notifyIcon1.Visible = true;
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(722, 577);
             this.Controls.Add(this.panel1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Calendar";
@@ -323,6 +334,7 @@
         private System.Windows.Forms.Label txtNotification;
         private System.Windows.Forms.ListView lstAppointment;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
     }
 }
 
