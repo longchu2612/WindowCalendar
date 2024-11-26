@@ -98,7 +98,9 @@ namespace WindowCalender
                     Button btn = new Button() { Width = Constant.WidthOfButton + Constant.margin, Height = Constant.HeigthOfButton };
                     btn.Location = new Point(Constant.WidthOfButton + oldbutton.Location.X, oldbutton.Location.Y);
 
-                    btn.Click += btn_Click;
+                    //btn.Click += btn_Click;
+                    btn.MouseClick += btn_MouseClick;
+                    btn.MouseDown += btn_MouseDown;
                     //btn.DoubleClick += btn_DoubleClick;
 
                     pnlMatrix.Controls.Add(btn);
@@ -114,6 +116,92 @@ namespace WindowCalender
 
 
 
+        }
+
+        private void btn_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (string.IsNullOrEmpty((sender as Button).Text))
+                {
+                    return;
+                }
+                txtNotification.Visible = false;
+                lstAppointment.Visible = false;
+                PlanOfDate planOfDate = new PlanOfDate(new DateTime(dtpDateTime.Value.Year, dtpDateTime.Value.Month, Convert.ToInt32((sender as Button).Text)));
+                planOfDate.ShowDialog();
+            }
+        }
+
+        private async void btn_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                Button buttonClicked = sender as Button;
+                int year = dtpDateTime.Value.Year;
+                int month = dtpDateTime.Value.Month;
+
+                if (buttonClicked.Text == "")
+                {
+                    txtNotification.Text = "";
+                    lstAppointment.Visible = false;
+                    return;
+                }
+
+                DateTime dateTime = new DateTime(year, month, Convert.ToInt32(buttonClicked.Text));
+                Console.WriteLine(dateTime);
+
+
+
+                AppointmentResult result = await GetAppointmentsWithHavingReason(dateTime);
+
+
+                if (result.Appointments == null && result.IsTokenValid == false)
+                {
+                    MessageBox.Show("Unthorization");
+                    this.Close();
+                    LoginForm login = new LoginForm();
+                    login.Show();
+                    return;
+                }
+
+                if (result.Appointments == null || result.Appointments.Count == 0)
+                {
+                    txtNotification.Text = "Hôm này bạn không có lịch hẹn nào!";
+                    txtNotification.Visible = true;
+                    lstAppointment.Visible = false;
+                }
+                else
+                {
+                    int count = result.Appointments.Count;
+                    txtNotification.Text = $"Hôm nay bạn có {count} lịch hẹn!";
+                    txtNotification.Visible = true;
+
+                    lstAppointment.Visible = true;
+
+                    lstAppointment.Items.Clear();
+
+                    Console.WriteLine(result.Appointments);
+
+                    foreach (var appointment in result.Appointments)
+                    {
+                        //ListViewItem item = new ListViewItem(appointment.Reason);
+                        Console.WriteLine(appointment.reason);
+                        ListViewItem item = new ListViewItem(appointment.reason);
+                        string fromCoordinates = (appointment.fromX.HasValue ? appointment.fromX.Value.ToString("D2") : "00") +
+                             ":" +
+                             (appointment.fromY.HasValue ? appointment.fromY.Value.ToString("D2") : "00");
+                        item.SubItems.Add(fromCoordinates);
+                        string toCoordinates = (appointment.toX.HasValue ? appointment.toX.Value.ToString("D2") : "00") +
+                           ":" +
+                           (appointment.toY.HasValue ? appointment.toY.Value.ToString("D2") : "00");
+                        item.SubItems.Add(toCoordinates);
+                        //Console.WriteLine(item);
+                        lstAppointment.Items.Add(item);
+                    }
+
+                }
+            }
         }
 
         //private void btn_DoubleClick(object sender, EventArgs e)
